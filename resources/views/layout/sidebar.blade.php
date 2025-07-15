@@ -110,24 +110,8 @@
       <li class="menu-item {{ Route::is('surat/jenis.*') ? 'active' : '' }}">
         <a href=""
           class="menu-link">
-          <i class="menu-icon tf-icons bx bxs-school"></i>
-          <div class="text-truncate" data-i18n="Kelas">Kelas</div>
-        </a>
-      </li>
-      {{-- mata pelajaran --}}
-      <li class="menu-item {{ Route::is('master/mapel.*') ? 'active' : '' }}">
-        <a href=""
-          class="menu-link">
-          <i class="menu-icon tf-icons bx bx-book-content"></i>
-          <div class="text-truncate" data-i18n="Mata Pelajaran">Mata Pelajaran</div>
-        </a>
-      </li>
-      {{-- Hari --}}
-      <li class="menu-item {{ Route::is('master/hari.*') ? 'active' : '' }}">
-        <a href=""
-          class="menu-link">
-          <i class="menu-icon tf-icons bx bx-calendar-week"></i>
-          <div class="text-truncate" data-i18n="Hari">Hari</div>
+          <i class="menu-icon tf-icons bx bx-category"></i>
+          <div class="text-truncate" data-i18n="Jenis Surat">Jenis Surat</div>
         </a>
       </li>
 
