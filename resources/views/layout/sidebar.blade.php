@@ -81,65 +81,6 @@
         </a>
       </li>
 
-      <li class="menu-header small text-uppercase">
-        <span class="menu-header-text">
-          Administrator 
-        </span>
-      </li>
-      @canany(['guru', 'wali-kelas'])
-        <!-- Menu Saya -->
-        <li class="menu-item {{ Route::is('menu/saya/*') ? 'open active' : '' }}">
-          <a href="javascript:void(0);" class="menu-link menu-toggle">
-            <i class="menu-icon tf-icons bx bx-box"></i>
-            <div class="text-truncate" data-i18n="menu-saya">Menu Guru</div>
-          </a>
-          <ul class="menu-sub">
-            {{-- Kelas Saya (Untuk wali Kelas) (bisa mengakses riwayat absensi per siswa)--}}
-            <li class="menu-item {{ Route::is('menu/saya/kelas-saya.*') ? 'active' : '' }}">
-              <a href="" class="menu-link">
-                <div class="text-truncate" data-i18n="Kelas-saya">Kelas Saya</div>
-              </a>
-            </li>
-            {{-- Kelas Aktif (Kelas yang diajar di waktu sekarang) (bisa mengambil absen siswa sampai kelas ditutup)--}}
-            <li class="menu-item {{ Route::is('menu/saya/kelas-aktif.*') ? 'active' : '' }}">
-              <a href="" class="menu-link">
-                <div class="text-truncate" data-i18n="Kelas-aktif">Kelas Aktif</div>
-              </a>
-            </li>
-            {{-- Jadwal Mengajar (terdapat jadwal mengajar sesuai guru yang login)--}}
-            <li class="menu-item {{ Route::is('menu/saya/jadwal-mengajar.*') ? 'active' : '' }}">
-              <a href="" class="menu-link">
-                <div class="text-truncate" data-i18n="Kelas-saya">Jadwal Mengajar</div>
-              </a>
-            </li>
-
-          </ul>
-        </li>
-      @endcanany
-
-      @can('kepsek')
-      <!-- Report -->
-      <li class="menu-item {{ Route::is('rekap/presensi/*') ? 'open active' : '' }}">
-        <a href="javascript:void(0);" class="menu-link menu-toggle">
-          <i class="menu-icon tf-icons bx bxs-report"></i>
-          <div class="text-truncate" data-i18n="menu-saya">Rekapitulasi</div>
-        </a>
-        <ul class="menu-sub">
-          <li class="menu-item {{ Route::is('rekap/presensi/siswa.*') ? 'active' : '' }}">
-            <a href="{{ route('rekap/presensi/siswa.index') }}" class="menu-link">
-              <div class="text-truncate" data-i18n="presensi-siswa">Presensi Per-Siswa</div>
-            </a>
-          </li>
-          <li class="menu-item {{ Route::is('rekap/presensi/akhir.*') ? 'active' : '' }}">
-            <a href="{{ route('rekap/presensi/akhir.index') }}" class="menu-link">
-              <div class="text-truncate" data-i18n="Kelas-aktif">Presensi Akhir</div>
-            </a>
-          </li>
-
-        </ul>
-      </li>
-      @endcan
-
       {{-- master data --}}
       <li class="menu-header small text-uppercase">
         <span class="menu-header-text">Master Data</span>
@@ -157,13 +98,11 @@
               <div class="text-truncate" data-i18n="penduduk">Penduduk</div>
             </a>
           </li>
-          @can('admin')
           <li class="menu-item {{ Route::is('master/aktor/pengguna.*') ? 'active' : '' }}">
             <a href="{{ route('master/aktor/pengguna.index') }}" class="menu-link">
               <div class="text-truncate" data-i18n="Akun Pengguna">Akun Pengguna</div>
             </a>
           </li>
-          @endcan
         </ul>
       </li>
       @endcan
@@ -191,19 +130,6 @@
           <div class="text-truncate" data-i18n="Hari">Hari</div>
         </a>
       </li>
-      
-      {{-- restore Data --}}
-      {{-- <li class="menu-header small text-uppercase">
-        <span class="menu-header-text">Pemulihan Data</span>
-      </li>
-      <li class="menu-item">
-        <a href=""
-          class="menu-link">
-          <i class="menu-icon tf-icons bx bxs-data"></i>
-          <div class="text-truncate" data-i18n="Restore">Restore</div>
-        </a>
-      </li> --}}
-
 
     </ul>
 </aside>
