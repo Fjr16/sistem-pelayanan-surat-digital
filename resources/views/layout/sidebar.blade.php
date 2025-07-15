@@ -73,11 +73,11 @@
         </a>
       </li>
 
-      {{-- jadwal Pelajaran --}}
-      <li class="menu-item {{ Route::is('jadwal/pelajaran*') ? 'active' : '' }}">
+      {{-- Pengajuan Surat --}}
+      <li class="menu-item {{ Route::is('surat.*') ? 'active' : '' }}">
         <a href="" class="menu-link">
-          <i class="menu-icon tf-icons bx bx-task"></i>
-          <div class="text-truncate" data-i18n="Jadwal Pelajaran">Jadwal Pelajaran</div>
+          <i class="menu-icon tf-icons bx bx-mail-send"></i>
+          <div class="text-truncate" data-i18n="Surat">Pengajuan Surat</div>
         </a>
       </li>
 
@@ -145,22 +145,16 @@
         <span class="menu-header-text">Master Data</span>
       </li>
       <!-- Person -->
+      @can('admin')
       <li class="menu-item {{ Route::is('master/aktor/*') ? 'open active' : '' }}">
         <a href="javascript:void(0);" class="menu-link menu-toggle">
           <i class="menu-icon tf-icons bx bx-group"></i>
           <div class="text-truncate" data-i18n="Aktor">Aktor</div>
         </a>
         <ul class="menu-sub">
-          @canany(['admin', 'kepsek'])
-          <li class="menu-item {{ Route::is('master/aktor/guru.*') ? 'active' : '' }}">
+          <li class="menu-item {{ Route::is('penduduk.*') ? 'active' : '' }}">
             <a href="" class="menu-link">
-              <div class="text-truncate" data-i18n="Guru">Guru</div>
-            </a>
-          </li>
-          @endcanany
-          <li class="menu-item {{ Route::is('master/aktor/murid.*') ? 'active' : '' }}">
-            <a href="" class="menu-link">
-              <div class="text-truncate" data-i18n="Murid">Murid</div>
+              <div class="text-truncate" data-i18n="penduduk">Penduduk</div>
             </a>
           </li>
           @can('admin')
@@ -172,8 +166,9 @@
           @endcan
         </ul>
       </li>
-      {{-- Kelas --}}
-      <li class="menu-item {{ Route::is('master/kelas.*') ? 'active' : '' }}">
+      @endcan
+      {{-- Jenis Surat --}}
+      <li class="menu-item {{ Route::is('surat/jenis.*') ? 'active' : '' }}">
         <a href=""
           class="menu-link">
           <i class="menu-icon tf-icons bx bxs-school"></i>
