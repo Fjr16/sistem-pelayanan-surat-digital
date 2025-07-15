@@ -8,7 +8,9 @@ use Illuminate\Support\Facades\Auth;
 class AuthenticateController extends Controller
 {
     public function index(){
-        return view('pages.auth.login');
+        $title = 'Welcome to ' . env('APP_NAME');
+        $slug = 'Please sign-in to your account and make your first submission';
+        return view('pages.auth.login', compact('title', 'slug'));
     }
 
     public function store(Request $request) {
