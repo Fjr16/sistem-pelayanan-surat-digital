@@ -1,12 +1,8 @@
 <?php
 
 use App\Http\Controllers\AuthenticateController;
-use App\Http\Controllers\LessonScheduleController;
 use App\Http\Controllers\MasterController;
-use App\Http\Controllers\MyClassController;
 use App\Http\Controllers\RekapitulasiController;
-use App\Http\Controllers\StudentController;
-use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -16,15 +12,9 @@ Route::middleware('auth')->group(function () {
     // dashboard
     Route::get('/dashboard', [MasterController::class, 'dashboard'])->name('dashboard');
 
-    // hari
-    Route::get('/master/hari', [MasterController::class, 'indexDays'])->name('master/hari.index');
-    Route::post('/master/hari/store', [MasterController::class, 'storeDays'])->name('master/hari.store');
-    Route::get('/master/hari/edit/{id}', [MasterController::class, 'editDays'])->name('master/hari.edit');
-    Route::put('/master/hari/update/{id}', [MasterController::class, 'updateDays'])->name('master/hari.update');
-    Route::delete('/master/hari/destroy/{id}', [MasterController::class, 'destroyDays'])->name('master/hari.destroy');
-        
-
     Route::middleware('admin')->group(function () {
+        Route::get('/user/get/data', [UserController::class, 'getData'])->name('user.getData');
+        Route::post('/get/detail/user', [UserController::class, 'getDetailUser'])->name('user.getDetail');
         // Pengguna
         Route::get('/master/aktor/pengguna', [UserController::class, 'index'])->name('master/aktor/pengguna.index');
         Route::post('/master/aktor/pengguna/store', [UserController::class, 'store'])->name('master/aktor/pengguna.store');
@@ -35,6 +25,27 @@ Route::middleware('auth')->group(function () {
         Route::put('/pengguna/restore/{id}', [UserController::class, 'restore'])->name('pengguna.restore');
         
         Route::get('/profile', [UserController::class, 'profile'])->name('profile')->withoutMiddleware('admin');
+    });    
+    Route::middleware('admin')->prefix('master/')->group(function () {
+        Route::get('penduduk', [MasterController::class, 'indexPenduduk'])->name('penduduk.index');
+        Route::get('penduduk/create', [MasterController::class, 'createPenduduk'])->name('penduduk.create');
+        Route::post('penduduk/store', [MasterController::class, 'storePenduduk'])->name('penduduk.store');
+        Route::delete('penduduk/destroy', [MasterController::class, 'destroyPenduduk'])->name('penduduk.destroy');
+
+        // Route::get('surat', [MasterController::class, 'indexSurat'])->name('surat.index');
+        // Route::get('surat/create', [MasterController::class, 'createSurat'])->name('surat.create');
+        // Route::post('surat/store', [MasterController::class, 'storeSurat'])->name('surat.store');
+        // Route::delete('surat/destroy', [MasterController::class, 'destroySurat'])->name('surat.destroy');
+
+        Route::get('jenis/surat', [MasterController::class, 'indexJenisSurat'])->name('surat/jenis.index');
+        Route::get('jenis/surat/create', [MasterController::class, 'createJenisSurat'])->name('surat/jenis.create');
+        Route::get('jenis/surat/store', [MasterController::class, 'storeJenisSurat'])->name('surat/jenis.store');
+        Route::delete('jenis/surat/destroy', [MasterController::class, 'destroyJenisSurat'])->name('surat/jenis.destroy');
+
+        // Route::get('template/surat', [MasterController::class, 'indexTemplateSurat'])->name('surat/template.index');
+        // Route::get('template/surat/create', [MasterController::class, 'createTemplateSurat'])->name('surat/template.create');
+        // Route::get('template/surat/store', [MasterController::class, 'storeTemplateSurat'])->name('surat/template.store');
+        // Route::delete('template/surat/destroy', [MasterController::class, 'destroyTemplateSurat'])->name('surat/template.destroy');
     });    
         
     // Route::middleware('kepsek')->group(function(){
