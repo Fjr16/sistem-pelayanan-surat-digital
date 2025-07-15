@@ -7,8 +7,8 @@
         <!-- Register -->
         <div class="card px-sm-6 px-0">
           <div class="card-body">
-            <h4 class="mb-1">Welcome to {{ env('APP_NAME') }}! 👋</h4>
-            <p class="mb-6">Please sign-in to your account and start the adventure</p>
+            <h4 class="mb-1">{{ $title ?? '' }}! 👋</h4>
+            <p class="mb-6">{{ $slug ?? '' }}</p>
 
             <form id="formAuthentication" class="mb-6" action="{{ route('login') }}" method="POST">
               @csrf

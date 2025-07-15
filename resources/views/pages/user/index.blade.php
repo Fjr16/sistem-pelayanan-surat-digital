@@ -13,18 +13,19 @@
             </div>
             <div class="card-body">
                 <div class="table-responsive text-nowrap">
-                    <table class="table table-sm dataTable">
-                    <thead class="table-dark">
-                        <tr class="text-nowrap">
-                            <th>No</th>
-                            <th>Nama</th>
-                            <th>Username</th>
-                            <th>Email</th>
-                            <th>Role</th>
-                            <th>aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+                    <table class="table table-sm" id="tabel-data">
+                        <thead class="table-dark">
+                            <tr class="text-nowrap">
+                                <th>No</th>
+                                <th>Action</th>
+                                <th>Nama</th>
+                                <th>Username</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Created at</th>
+                            </tr>
+                        </thead>
+                    {{-- <tbody>
                         @foreach ($data as $item)
                         <tr>
                             <td>{{ $loop->iteration }}</td>
@@ -48,7 +49,7 @@
                             </td>
                         </tr>
                         @endforeach
-                    </tbody>
+                    </tbody> --}}
                     </table>
                 </div>
             </div>
@@ -198,6 +199,52 @@
     
 
     @push('page-js')
+    <script>
+        $(document).ready(function(){
+            renderTable();
+        });
+        function renderTable(){
+            $('#tabel-data').DataTable({
+                processing:true,
+                serverSide:true,
+                ajax:"{{ route('user.getData') }}",
+                columns:[
+                    {
+                        data:'DT_RowIndex',
+                        name:'DT_RowIndex',
+                        orderable:false,
+                        searchable:false
+                    },
+                    {
+                        data:'action',
+                        name:'action',
+                        orderable:false,
+                        searchable:false
+                    },
+                    {
+                        data:'name',
+                        name:'name'
+                    },
+                    {
+                        data:'username',
+                        name:'username'
+                    },
+                    {
+                        data:'email',
+                        name:'email'
+                    },
+                    {
+                        data:'role',
+                        name:'role'
+                    },
+                    {
+                        data:'created_at',
+                        name:'created_at'
+                    }
+                ]
+            });
+        }
+    </script>
 
     {{-- konfirmasi modal delete --}}
         <script>
@@ -226,20 +273,40 @@
                 const modal = new bootstrap.Modal(document.getElementById('createModal'));
                 modal.show();
             }
-            function openModalEdit(item){
-                var item = JSON.parse(item);
+            function openModalEdit(idUser){
                 var editModal = document.getElementById('editModal');
                 var form = editModal.querySelector('form');
                 var actionTemplate = form.getAttribute('data-action');
-                form.action = actionTemplate.replace(':id', item.id);
-                form.querySelector('#name').value = item.name;
-                form.querySelector('#username').value = item.username;
-                form.querySelector('#email').value = item.email;
-                form.querySelector('#role').value = item.role;
                 
-                var modalEdit = new bootstrap.Modal(editModal);
-                modalEdit.show();
+                $.ajax({
+                    url:"{{ route('user.getDetail') }}",
+                    type:'post',
+                    data:{
+                        _token:"{{ csrf_token() }}",
+                        user_id: idUser
+                    },
+                    success:function(res){
+                        if (res.status) {
+                            var item = res.data;
+
+                            form.action = actionTemplate.replace(':id', item.id);
+                            form.querySelector('#name').value = item.name;
+                            form.querySelector('#username').value = item.username;
+                            form.querySelector('#email').value = item.email;
+                            form.querySelector('#role').value = item.role;
+                            
+                            var modalEdit = new bootstrap.Modal(editModal);
+                            modalEdit.show();
+                        }else{
+                            console.log(res.message);
+                        }
+                    },
+                    error:function(xhr){
+                        console.log(xhr.responseText)
+                    }
+                });
             }
+
         </script>
     @endpush
 @endsection

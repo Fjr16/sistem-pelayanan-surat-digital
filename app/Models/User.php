@@ -49,8 +49,8 @@ class User extends Authenticatable
         ];
     }
 
-    // akun untuk guru
-    public function teacher() {
-        return $this->hasOne(Teacher::class);
+    // akun untuk penduduk
+    public function citizen() {
+        return $this->hasOne(Citizen::class);
     }
 }
