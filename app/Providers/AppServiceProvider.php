@@ -20,19 +20,18 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Gate::define('admin', function ($user) {
-        //     return $user->role === 'Administrator';
-        // });
+        Gate::define('admin', function ($user) {
+            return $user->role === 'Administrator';
+        });
 
-        // Gate::define('guru', function ($user){
-        //     return $user->role === 'Guru';
-        // });
-        // Gate::define('wali-kelas', function ($user){
-        //     // return  && $user->teacher?->grade !== null;
-        //     return Gate::allows('guru', $user) && $user->teacher?->grade;
-        // });
-        // Gate::define('kepsek', function ($user) {
-        //     return $user->role === 'Kepala Sekolah';
-        // });
+        Gate::define('petugas', function ($user){
+            return $user->role === 'Petugas Wali Nagari';
+        });
+        Gate::define('wali-nagari', function ($user){
+            return $user->role === 'Wali Nagari';
+        });
+        Gate::define('warga', function ($user) {
+            return $user->role === 'Penduduk';
+        });
     }
 }

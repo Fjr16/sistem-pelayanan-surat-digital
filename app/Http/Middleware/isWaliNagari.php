@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
-class isWaliKelas
+class isWaliNagari
 {
     /**
      * Handle an incoming request.
@@ -16,9 +16,9 @@ class isWaliKelas
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (Auth::user()->role === 'Guru' && Auth::user()->teacher?->grade) {
-            return $next($request);
+        if (Auth::user()->role !== 'Wali Nagari') {
+            return redirect('/misc/forbidden');
         }
-        return redirect('/misc/forbidden');
+        return $next($request);
     }
 }
