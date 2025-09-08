@@ -107,8 +107,8 @@
       </li>
       @endcan
       {{-- Jenis Surat --}}
-      <li class="menu-item {{ Route::is('surat/jenis.*') ? 'active' : '' }}">
-        <a href=""
+      <li class="menu-item {{ Route::is('jenis/surat.*') ? 'active' : '' }}">
+        <a href="{{ route('jenis/surat.index') }}"
           class="menu-link">
           <i class="menu-icon tf-icons bx bx-category"></i>
           <div class="text-truncate" data-i18n="Jenis Surat">Jenis Surat</div>

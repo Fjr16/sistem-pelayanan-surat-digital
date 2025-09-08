@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Citizen;
+use App\Models\Mail;
 use App\Models\MailCategory;
 use App\Models\User;
 use Carbon\Carbon;
@@ -33,54 +34,55 @@ class MasterController extends Controller
     // end dashboard
 
     /* controller master data Penduduk */
-    public function indexPenduduk(){
-        $data = Citizen::all();
-        return view('pages.subject.index', [
-            'title' => 'Mata Pelajaran',
+    public function indexMail(){
+        $data = Mail::all();
+        return view('pages.mail.index', [
+            'title' => 'Jenis Surat',
             'data' => $data,
         ]);
     }
-    public function storePenduduk(Request $request) {
-        DB::beginTransaction();
-        try {
-            $data = $request->validate([
-                'name' => [
-                    'required',
-                    'string',
-                    Rule::unique('subjects')->where(function($query) use ($request) {
-                        return $query->whereRaw('LOWER(name) = ?', [strtolower($request->name)]);
-                    }),
-                ],
-                'code' => [
-                    'required',
-                    'string',
-                    Rule::unique('subjects')->where(function($query) use ($request) {
-                        return $query->whereRaw('LOWER(code) = ?', [strtolower($request->name)]);
-                    }),
-                ],
-            ], [
-                'name.required' => 'Nama mapel harus diisi',
-                'name.string' => 'Format Data Tidak Valid',
-                'name.unique' => 'nama mapel Telah digunakan',
-                'code.required' => 'Kode mapel harus diisi',
-                'code.string' => 'format data Tidak Valid',
-                'code.unique' => 'kode mapel Telah digunakan',
-            ]);
+    public function storeMail(Request $request) {
+        return $request->all();
+        // DB::beginTransaction();
+        // try {
+        //     $data = $request->validate([
+        //         'name' => [
+        //             'required',
+        //             'string',
+        //             Rule::unique('subjects')->where(function($query) use ($request) {
+        //                 return $query->whereRaw('LOWER(name) = ?', [strtolower($request->name)]);
+        //             }),
+        //         ],
+        //         'code' => [
+        //             'required',
+        //             'string',
+        //             Rule::unique('subjects')->where(function($query) use ($request) {
+        //                 return $query->whereRaw('LOWER(code) = ?', [strtolower($request->name)]);
+        //             }),
+        //         ],
+        //     ], [
+        //         'name.required' => 'Nama mapel harus diisi',
+        //         'name.string' => 'Format Data Tidak Valid',
+        //         'name.unique' => 'nama mapel Telah digunakan',
+        //         'code.required' => 'Kode mapel harus diisi',
+        //         'code.string' => 'format data Tidak Valid',
+        //         'code.unique' => 'kode mapel Telah digunakan',
+        //     ]);
             
-            Citizen::create($data);
+        //     Mail::create($data);
             
-            DB::commit();
-            return back()->with('success', 'Data Berhasil Disimpan');
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return back()->with('error', 'Kesalahan: ' . $e->getMessage());
-        } catch (ModelNotFoundException $e) {
-            DB::rollBack();
-            return back()->with('error', 'Kesalahan: ' . $e->getMessage());
-        } catch (ValidationException $e) {
-            DB::rollBack();
-            return back()->with('error', 'Kesalahan: ' . $e->getMessage());
-        }
+        //     DB::commit();
+        //     return back()->with('success', 'Data Berhasil Disimpan');
+        // } catch (\Exception $e) {
+        //     DB::rollBack();
+        //     return back()->with('error', 'Kesalahan: ' . $e->getMessage());
+        // } catch (ModelNotFoundException $e) {
+        //     DB::rollBack();
+        //     return back()->with('error', 'Kesalahan: ' . $e->getMessage());
+        // } catch (ValidationException $e) {
+        //     DB::rollBack();
+        //     return back()->with('error', 'Kesalahan: ' . $e->getMessage());
+        // }
     }
     public function updatePenduduk(Request $request, $id) {
         DB::beginTransaction();

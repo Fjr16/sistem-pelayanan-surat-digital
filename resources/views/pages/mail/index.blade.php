@@ -3,51 +3,43 @@
 @section('content')
 <div class="container-xxl flex-grow-1 container-p-y pt-0">
     <!-- Basic Layout -->
-    @can('admin')
-    <div class="card mb-4">
-        <h5 class="card-header">Tambah {{ $title ?? 'Hari' }}</h5>
-        <div class="card-body">
-            <form action="{{ route('master/hari.store') }}" method="POST">
-                @csrf
-                <div class="row mb-6">
-                    <div class="col-sm-2">
-                        <label class="form-label" for="order_number">Urutan</label>
-                        <input type="number" class="form-control" name="order_number" id="order_number" min="1" value="1" required>
+    <form action="{{ route('jenis/surat.store') }}" method="POST" id="save-form">
+    @csrf
+        <div class="card mb-4">
+            <h5 class="card-header">Tambah {{ $title ?? 'Jenis Surat' }}</h5>
+            <div class="card-body">
+                <div class="row g-2 align-items-end">
+                    {{-- Jenis Surat --}}
+                    <div class="col-12 col-md-5">
+                        <label class="form-label" for="name">Jenis Surat <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" name="name" id="name"
+                            placeholder="Surat Keterangan .." required>
                     </div>
-                    <div class="col-sm-10">
-                        <label class="form-label" for="name">Nama Hari</label>
-                        <input type="text" class="form-control" name="name" id="name" placeholder="Senin" required/>
+
+                    {{-- Deskripsi --}}
+                    <div class="col-12 col-md-7">
+                        <label class="form-label" for="description">Deskripsi</label>
+                        <textarea name="description" id="description" class="form-control" rows="1"></textarea>
                     </div>
                 </div>
-
-                <h5 class="border-top">Periode Pelajaran</h5>
-                <div id="lesson_period_container">
-                    <div class="row mb-2" id="lesson_period_1">
-                        <div class="col-sm-2">
-                            <label class="form-label" for="period_number_1">Periode Ke</label>
-                            <input type="number" class="form-control" name="period_number[]" id="period_number_1" min="1" value="1">
-                        </div>
-                        <div class="col-sm-10">
-                            <label class="form-label" for="start">Rentang Waktu</label>
-                            <div class="d-flex align-items-center">
-                                <div class="input-group">
-                                    <input type="time" class="form-control" name="start[]" id="start_1" value=""/>
-                                    <span class="input-group-text" id="basic-addon13">-</span>
-                                    <input type="time" class="form-control" name="end[]" id="end_1" value=""/>
-                                </div>
-                                <button type="button" class="btn btn-icon btn-sm btn-primary ms-1" onclick="addInput()"><i class="bx bx-plus"></i></button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <button type="submit" class="btn btn-sm btn-primary">Simpan</button>
-            </form>
+            </div>
         </div>
-    </div>
-    @endcan
 
-    <div class="card">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="m-0">Persyaratan Surat</h5>
+                <p class="small m-0 p-0 fst-italic">Tambahkan form yang harus diisi ketika surat diajukan, sesuai dengan persyaratan yang dibutuhkan</p>
+            </div>
+            <div class="card-body">
+                <div id="fb-editor"></div>
+                <textarea name="schema" id="schema" hidden></textarea>
+                <button type="submit" class="btn btn-md btn-primary mt-4">Simpan Form</button>
+            </div>
+        </div>
+    </form>
+
+
+    {{-- <div class="card">
         <h5 class="card-header">Daftar {{ $title ?? '' }}</h5>
         <div class="card-body">
 
@@ -104,9 +96,6 @@
                                         <td>{{ $detail->period_number ?? '-' }}</td>
                                         <td>{{ $detail->start ?? '-' }}</td>
                                         <td>{{ $detail->end ?? '-' }}</td>
-                                        {{-- <td>
-                                            
-                                        </td> --}}
                                     </tr>
                                     @endforeach
                                 </tbody>
@@ -118,13 +107,31 @@
                 @endforeach
               </div>
         </div>
-    </div>
+    </div> --}}
   </div>
 
     <x-confirm-modal/>
     
 
     @push('page-js')
+    {{-- cdn form builder --}}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
+    <script src="https://formbuilder.online/assets/js/form-builder.min.js"></script>
+
+    <script src="https://formbuilder.online/assets/js/form-render.min.js"></script>
+
+    <script>
+        jQuery(function($) {
+            var formBuilder = $(document.getElementById('fb-editor')).formBuilder();
+
+            $('#save-form').on('submit', function() {
+                var dataJson = JSON.stringify(formBuilder.actions.getData('json'));
+                console.log(dataJson)
+                $('#schema').val(JSON.stringify(formBuilder.actions.getData('json')));
+            });
+        });
+    </script>
 
     {{-- konfirmasi modal delete --}}
         <script>
