@@ -24,13 +24,26 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->name(),
+            'role_id' => 1,
             'username' => fake()->userName(),
-            'email' => fake()->unique()->safeEmail(),
-            'role' => 'Administrator',
-            // 'role' => 'Guru',
-            'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
+            'email' => fake()->unique()->safeEmail(),
+            'no_wa' => '081378580551',
+            'nik' => '1309041608010001',
+            'no_kk' => '1309041608010001',
+            'name' => fake()->name(),
+            'gender' => "Pria",
+            'tanggal_lhr' => "2001-08-16",
+            'tempat_lhr' => "Gadur",
+            'alamat_ktp' => "Gadur",
+            'alamat_dom' => "Padang",
+            'agama' => "Islam",
+            'status_kawin' => "belum menikah",
+            'pekerjaan' => "Programmer",
+            'jabatan' => "Sekretaris wali nagari",
+            'tanggal_masuk' => "2025-01-01",
+            'is_active' => true,
+            'email_verified_at' => now(),
             'remember_token' => Str::random(10),
         ];
     }

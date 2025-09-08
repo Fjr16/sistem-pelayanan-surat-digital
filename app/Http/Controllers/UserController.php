@@ -9,14 +9,63 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
+use Yajra\DataTables\Facades\DataTables;
 
 class UserController extends Controller
 {
 
+    public function getData(){
+        $data = User::query();
+
+        return DataTables::of($data)
+            ->addIndexColumn()
+            // menambahkan kolom aksi
+            ->addColumn('action', function($item) {
+                $editBtn = '<button type="button" class="btn btn-sm btn-warning text-white btn-icon me-1" onclick="openModalEdit(' . $item->id. ')"><i class="bx bx-edit"></i></button>';
+                $deleteBtn = '<form id="deleteForm-' . $item->id . '" action="' . route('master/aktor/pengguna.destroy', encrypt($item->id)) . '" method="POST" style="display:inline;">
+                                <input type="hidden" name="_token" value="' . csrf_token() . '">
+                                <input type="hidden" name="_method" value="DELETE">
+                                <button type="button" class="btn btn-sm btn-icon btn-danger text-white" onclick="confirmDelete(' . $item->id . ')"><i class="bx bx-trash"></i></button>
+                            </form>';
+                return $editBtn . $deleteBtn;
+            })
+            // mengubah format tanggal
+            ->editColumn('created_at', function($item){
+                return $item->created_at->format('d-m-Y H:i');
+            })
+            // agar kolom aksi tidak disaring/sorting
+            ->rawColumns(['action'])//wajib render html
+            ->make(true);
+    }
+
+    public function getDetailUser(Request $req){
+        try {
+            $item = User::find($req->user_id);
+            if ($item) {
+                return response()->json([
+                    'status' => true,
+                    'message' => 'succes',
+                    'data' => $item,
+                ]);
+            }else{
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Failed: gagal Mendapatkan detail user',
+                ]);
+            }
+        } catch (\Throwable $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Failed: Terjadi kesalahan Sistem, error: ' . $e->getMessage(),
+            ]);
+        }
+        
+    }
+
     public function profile() {
         $arrJk = [
-            'Laki-laki',
-            'Perempuan',
+            'Pria',
+            'Wanita',
         ];
         
         return view('pages.user.profile.index', [

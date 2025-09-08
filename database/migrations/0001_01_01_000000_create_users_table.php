@@ -13,12 +13,26 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('username')->unique();
-            $table->string('email')->unique();
+            $table->foreignId('role_id');
+            $table->string('username', 20)->unique()->nullable(false);
+            $table->string('password')->nullable(false);
+            $table->string('email', 30)->unique()->nullable(false);
+            $table->string('no_wa', 20)->unique()->nullable(false);
+            $table->string('nik', 16)->unique()->nullable(false);
+            $table->string('no_kk', 20)->nullable(false);
+            $table->string('name')->nullable(false);
+            $table->enum('gender', ['Pria', 'Wanita'])->nullable(false);
+            $table->date('tanggal_lhr')->nullable(false);
+            $table->string('tempat_lhr', 50)->nullable(false);
+            $table->text('alamat_ktp')->nullable();
+            $table->text('alamat_dom')->nullable();
+            $table->string('agama', 20)->nullable(false);
+            $table->string('status_kawin', 20)->nullable(false);
+            $table->string('pekerjaan', 50)->nullable();
+            $table->string('jabatan', 50)->nullable();
+            $table->date('tanggal_masuk')->nullable();
+            $table->boolean('is_active')->default(true);
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
-            $table->enum('role', ['Kepala Sekolah', 'Guru', 'Administrator']);
             $table->softDeletes();
             $table->rememberToken();
             $table->timestamps();

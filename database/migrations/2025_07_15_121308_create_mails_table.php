@@ -13,13 +13,9 @@ return new class extends Migration
     {
         Schema::create('mails', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('citizen_id')->nullable(false);
-            $table->foreignId('mail_category_id')->nullable(false);
-            $table->string('file_path')->nullable();
-            $table->dateTime('sent_at')->nullable();
-            $table->text('denied_note')->nullable();
-            $table->enum('status', ['pending', 'denied', 'approve', 'finished'])->default('pending');
-            $table->json('input_user')->nullable(false);
+            $table->string('name')->nullable(false);
+            $table->text('description')->nullable();
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
     }

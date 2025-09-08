@@ -11,14 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('form_fields', function (Blueprint $table) {
+        Schema::create('mail_requirements', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('mail_category_id')->nullable(false);
-            $table->string('input_name')->nullable(false);
-            $table->string('input_label')->nullable(false);
-            $table->enum('input_type', ['text', 'textarea', 'date', 'number', 'email', 'select']);
+            $table->foreignId('mail_id')->nullable(false);
+            $table->string('field_label')->nullable(false);
+            $table->string('field_name')->nullable(false);
+            $table->string('field_type', 20)->nullable(false);
             $table->boolean('is_required')->default(true);
             $table->json('options')->nullable();
+            $table->integer('urutan')->nullable(false);
             $table->timestamps();
         });
     }
@@ -28,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('form_fields');
+        Schema::dropIfExists('mail_requirements');
     }
 };

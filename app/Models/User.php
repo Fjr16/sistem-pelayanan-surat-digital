@@ -19,11 +19,26 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
-        'name',
+        'role_id',
         'username',
-        'email',
         'password',
-        'role',
+        'email',
+        'no_wa',
+        'nik',
+        'no_kk',
+        'name',
+        'gender',
+        'tanggal_lhr',
+        'tempat_lhr',
+        'alamat_ktp',
+        'alamat_dom',
+        'agama',
+        'status_kawin',
+        'pekerjaan',
+        'jabatan',
+        'tanggal_masuk',
+        'is_active',
+        // 'email_verified_at',
     ];
 
     /**
@@ -49,8 +64,13 @@ class User extends Authenticatable
         ];
     }
 
-    // akun untuk penduduk
-    public function citizen() {
-        return $this->hasOne(Citizen::class);
+    public function role() {
+        return $this->belongsTo(Role::class);
+    }
+    public function IncomingMailsAsPenduduks() {
+        return $this->hasMany(IncomingMail::class, 'penduduk_id', 'id');
+    }
+    public function IncomingMailsAsPetugas() {
+        return $this->hasMany(IncomingMail::class, 'petugas_id', 'id');
     }
 }
