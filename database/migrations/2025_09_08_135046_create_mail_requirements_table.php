@@ -19,7 +19,6 @@ return new class extends Migration
             $table->string('field_type', 20)->nullable(false);
             $table->boolean('is_required')->default(true);
             $table->json('options')->nullable();
-            $table->integer('urutan')->nullable(false);
             $table->timestamps();
         });
     }

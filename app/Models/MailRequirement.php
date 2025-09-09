@@ -13,7 +13,6 @@ class MailRequirement extends Model
         'field_type',
         'is_required',
         'options',
-        'urutan',
     ];
 
     public function mail(){
