@@ -11,8 +11,13 @@ class MailRequirement extends Model
         'field_label',
         'field_name',
         'field_type',
+        'field_placeholder',
         'is_required',
         'options',
+        'min',
+        'max',
+        'step',
+        'inline',
     ];
 
     public function mail(){

@@ -20,12 +20,12 @@ Route::middleware('auth')->group(function () {
         Route::post('/master/aktor/pengguna/store', [UserController::class, 'store'])->name('master/aktor/pengguna.store');
         Route::put('/master/aktor/pengguna/update/{id}', [UserController::class, 'update'])->name('master/aktor/pengguna.update')->withoutMiddleware('admin');
         Route::delete('/master/aktor/pengguna/destroy/{id}', [UserController::class, 'destroy'])->name('master/aktor/pengguna.destroy');
-        
+
         Route::delete('/pengguna/restore/forceDelete/{id}', [UserController::class, 'forceDelete'])->name('pengguna/restore.forceDelete');
         Route::put('/pengguna/restore/{id}', [UserController::class, 'restore'])->name('pengguna.restore');
-        
+
         Route::get('/profile', [UserController::class, 'profile'])->name('profile')->withoutMiddleware('admin');
-    });    
+    });
     // Route::middleware('admin')->prefix('master/')->group(function () {
         Route::get('penduduk', [MasterController::class, 'indexPenduduk'])->name('penduduk.index');
         Route::get('penduduk/create', [MasterController::class, 'createPenduduk'])->name('penduduk.create');
@@ -40,20 +40,20 @@ Route::middleware('auth')->group(function () {
         Route::get('jenis/surat', [MasterController::class, 'indexMail'])->name('jenis/surat.index');
         Route::get('jenis/surat/create', [MasterController::class, 'createMail'])->name('jenis/surat.create');
         Route::post('jenis/surat/store', [MasterController::class, 'storeMail'])->name('jenis/surat.store');
-        Route::delete('jenis/surat/destroy', [MasterController::class, 'destroyMail'])->name('jenis/surat.destroy');
+        Route::delete('jenis/surat/destroy/{id}', [MasterController::class, 'destroyMail'])->name('jenis/surat.destroy');
 
         // Route::get('template/surat', [MasterController::class, 'indexTemplateSurat'])->name('surat/template.index');
         // Route::get('template/surat/create', [MasterController::class, 'createTemplateSurat'])->name('surat/template.create');
         // Route::get('template/surat/store', [MasterController::class, 'storeTemplateSurat'])->name('surat/template.store');
         // Route::delete('template/surat/destroy', [MasterController::class, 'destroyTemplateSurat'])->name('surat/template.destroy');
-    // });    
-        
+    // });
+
     // Route::middleware('kepsek')->group(function(){
         // rekapitulasi
-        Route::get('rekapitulasi/presensi/siswa', [RekapitulasiController::class, 'indexSiswa'])->name('rekap/presensi/siswa.index');
-        Route::post('rekapitulasi/presensi/siswa', [RekapitulasiController::class, 'presensiSiswaExcel'])->name('rekap/presensi/siswa.excel')->withoutMiddleware('kepsek');
-        Route::get('rekapitulasi/presensi/akhir', [RekapitulasiController::class, 'indexAkhir'])->name('rekap/presensi/akhir.index');
-        Route::post('rekapitulasi/presensi/akhir', [RekapitulasiController::class, 'presensiAkhirExcel'])->name('rekap/presensi/akhir.excel');
+        // Route::get('rekapitulasi/presensi/siswa', [RekapitulasiController::class, 'indexSiswa'])->name('rekap/presensi/siswa.index');
+        // Route::post('rekapitulasi/presensi/siswa', [RekapitulasiController::class, 'presensiSiswaExcel'])->name('rekap/presensi/siswa.excel')->withoutMiddleware('kepsek');
+        // Route::get('rekapitulasi/presensi/akhir', [RekapitulasiController::class, 'indexAkhir'])->name('rekap/presensi/akhir.index');
+        // Route::post('rekapitulasi/presensi/akhir', [RekapitulasiController::class, 'presensiAkhirExcel'])->name('rekap/presensi/akhir.excel');
     // });
 
     Route::get('/misc/forbidden', function () {

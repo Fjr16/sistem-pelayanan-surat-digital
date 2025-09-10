@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Mail;
 use App\Models\MailRequirement;
 use App\Models\User;
+use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -16,7 +17,7 @@ class MasterController extends Controller
         $year = now()->year;
         $startDate = now()->setYear((int) $year)->setMonth(1)->startOfMonth();
         $endDate = now()->setYear((int) $year)->setMonth(12)->endOfMonth();
-                                    
+
         $totalDynamic = User::count();
         return view('pages.dashboard', [
             'total_siswa' => 10,
@@ -29,12 +30,61 @@ class MasterController extends Controller
     }
     // end dashboard
 
+    private function formatToFormBuilder($item){
+        if ($item->mailRequirements->isEmpty()) {
+            return null;
+        }
+        $result = $item->mailRequirements->map(function($row){
+            return [
+                'label' => $row->field_label,
+                'name' => $row->field_name,
+                'type' => $row->field_type,
+                'subtype' => $row->field_type,
+                'placeholder' => $row->field_placeholder,
+                'required' => $row->is_required,
+                'values' => $row->options,
+                'min' => $row->min,
+                'max' => $row->max,
+                'maxlength' => $row->max,
+                'step' => $row->step,
+                'inline' => $row->inline,
+                'className' => ($row->field_type == 'radio-group' || $row->field_type == 'checkbox-group') ? null : 'form-control',
+            ];
+        });
+
+        return $result;
+    }
+
     /* controller master data surat */
     public function indexMail(){
         $data = Mail::all();
         return view('pages.mail.index', [
-            'title' => 'Jenis Surat',
+            'title' => 'Data Jenis Surat',
             'data' => $data,
+        ]);
+    }
+    public function createMail(){
+        $idToUpdate = request()->query('edit');
+        $item = null;
+        $formBuilderData = null;
+        if ($idToUpdate) {
+            try {
+                $mail_id = decrypt($idToUpdate);
+                $item = Mail::find($mail_id);
+
+                if (!$item) {
+                    return back()->with('error', 'Surat Tidak Ditemukan');
+                }
+                $formBuilderData = $this->formatToFormBuilder($item);
+
+            } catch (DecryptException $de) {
+                return back()->with('error', substr($de->getMessage(), 0, 100));
+            }
+        }
+        return view('pages.mail.create', [
+            'title' => 'Tambah Jenis Surat',
+            'item' => $item,
+            'formBuilderData' => $formBuilderData,
         ]);
     }
     public function storeMail(Request $request) {
@@ -50,7 +100,6 @@ class MasterController extends Controller
                     'message' => substr($validators->errors()->first(), 0, 150),
                 ]);
             }
-            // return json_decode($request->schema);
 
             DB::beginTransaction();
 
@@ -60,22 +109,27 @@ class MasterController extends Controller
 
             $mail->name = $request->name;
             $mail->description = $request->description;
-            $mail->is_active = true;
+            $mail->is_active = isset($request->is_active) ? true : false;
             if($mail->save()){
-                foreach ($decodeJson as $key => $item) {
+                foreach ($decodeJson as $item) {
                     $mailRequirement = new MailRequirement();
                     $mailRequirement->mail_id = $mail->id;
                     $mailRequirement->field_label = $item->label;
                     $mailRequirement->field_name = $item->name;
-                    $mailRequirement->field_type = $item->type;
+                    $mailRequirement->field_type = isset($item->subtype) ? $item->subtype : $item->type;
+                    $mailRequirement->field_placeholder = isset($item->placeholder) ? $item->placeholder : null;
                     $mailRequirement->is_required = $item->required;
                     $mailRequirement->options = isset($item->values) ? json_encode($item->values) : null;
+                    $mailRequirement->min = isset($item->min) ? $item->min : null;
+                    $mailRequirement->max = isset($item->max) ? $item->max : (isset($item->maxlength) ? $item->maxlength : null);
+                    $mailRequirement->step = isset($item->step) ? $item->step : null;
+                    $mailRequirement->inline = isset($item->inline) ? $item->inline : false;
                     $mailRequirement->save();
                 }
             }
 
             DB::commit();
-    
+
             return response()->json([
                 'status' => true,
                 'message' => 'Process successfully',
@@ -89,59 +143,15 @@ class MasterController extends Controller
         }
     }
 
-    // public function updatePenduduk(Request $request, $id) {
-    //     DB::beginTransaction();
-    //     try {
-    //         $item = Citizen::findOrFail($id);
-    //         $data = $request->validate([
-    //             'name' => [
-    //                 'required',
-    //                 'string',
-    //                 Rule::unique('subjects')->ignore($id)->where(function($query) use ($request) {
-    //                     return $query->whereRaw('LOWER(name) = ?', [strtolower($request->name)]);
-    //                 }),
-    //             ],
-    //             'code' => [
-    //                 'required',
-    //                 'string',
-    //                 Rule::unique('subjects')->ignore($id)->where(function($query) use ($request) {
-    //                     return $query->whereRaw('LOWER(code) = ?', [strtolower($request->name)]);
-    //                 }),
-    //             ],
-    //         ], [
-    //             'name.required' => 'Nama mapel harus diisi',
-    //             'name.string' => 'Format Data Tidak Valid',
-    //             'name.unique' => 'nama mapel Telah digunakan',
-    //             'code.required' => 'Kode mapel harus diisi',
-    //             'code.string' => 'format data Tidak Valid',
-    //             'code.unique' => 'kode mapel Telah digunakan',
-    //         ]);
-            
-    //         $item->update($data);
-            
-    //         DB::commit();
-    //         return back()->with('success', 'Data Berhasil Disimpan');
-    //     } catch (\Exception $e) {
-    //         DB::rollBack();
-    //         return back()->with('error', 'Kesalahan: ' . $e->getMessage());
-    //     } catch (ModelNotFoundException $e) {
-    //         DB::rollBack();
-    //         return back()->with('error', 'Kesalahan: ' . $e->getMessage());
-    //     } catch (ValidationException $e) {
-    //         DB::rollBack();
-    //         return back()->with('error', 'Kesalahan: ' . $e->getMessage());
-    //     }
-    // }
-    // public function destroyPenduduk($id) {
-    //     try {
-    //         $item = Citizen::findOrFail(decrypt($id));
-    //         $item->delete();
-    //         return back()->with('success', 'Data Berhasil Dihapus');
-    //     } catch (\Exception $e) {
-    //         return back()->with('error', 'Kesalahan: ' . $e->getMessage());
-    //     } catch (ModelNotFoundException $e) {
-    //         return back()->with('error', 'Kesalahan: ' . $e->getMessage());
-    //     }
-    // }
+    public function destroyMail($id) {
+        try {
+            $item = Mail::findOrFail(decrypt($id));
+            $item->mailRequirements()->delete();
+            $item->delete();
+            return back()->with('success', 'Data Berhasil Dihapus');
+        } catch (\Throwable $e) {
+            return back()->with('error', 'Terjadi Kesalahan : ' . substr($e->getMessage(), 0, 150));
+        }
+    }
     /* End controller master data surat */
 }

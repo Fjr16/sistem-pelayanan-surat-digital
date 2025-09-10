@@ -11,4 +11,7 @@ enum InputType:string {
     case radio = "radio";
     case checkbox = "checkbox";
     case textarea = "textarea";
+    case date = "date";
+    case time = "time";
+    case datetime = "datetime-local";
 }
