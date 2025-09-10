@@ -74,8 +74,8 @@
       </li>
 
       {{-- Pengajuan Surat --}}
-      <li class="menu-item {{ Route::is('surat.*') ? 'active' : '' }}">
-        <a href="" class="menu-link">
+      <li class="menu-item {{ Route::is('pengajuan/surat.*') ? 'active' : '' }}">
+        <a href="{{ route('pengajuan/surat.create') }}" class="menu-link">
           <i class="menu-icon tf-icons bx bx-mail-send"></i>
           <div class="text-truncate" data-i18n="Surat">Pengajuan Surat</div>
         </a>

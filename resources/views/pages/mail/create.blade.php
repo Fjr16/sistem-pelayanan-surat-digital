@@ -7,6 +7,7 @@
         <div class="card-body">
             <div class="row mb-4">
                 <div class="col-12">
+                    <input type="hidden" name="mail_id" id="mail_id" value="{{ $item?->id }}">
                     <label class="form-label" for="name">Jenis Surat <span class="text-danger">*</span></label>
                     <input type="text" class="form-control" name="name" id="name" value="{{ $item?->name ?? '' }}"
                         placeholder="Surat Keterangan .." required>
@@ -21,7 +22,7 @@
             <div class="row mb-4">
                 <div class="col-12">
                     <div class="form-check form-switch mb-2">
-                        <input class="form-check-input" type="checkbox" id="is_active" name="is_active" {{ $item?->is_active == true ? 'checked' : 'false' }}/>
+                        <input class="form-check-input" type="checkbox" id="is_active" name="is_active" {{ $item?->is_active == true ? 'checked' : '' }}/>
                         <label class="form-check-label" for="is_active">Geser ke kiri untuk mengaktifkan jenis surat ini</label>
                     </div>
                 </div>
@@ -51,7 +52,6 @@
 
     <script>
         var exFormData = @json($formBuilderData);
-        console.log(exFormData);
         jQuery(function($) {
             var formBuilder = $('#fb-editor').formBuilder({
                 controlOrder:['text', 'number', 'textarea', 'date', 'file', 'select', 'radio-group', 'checkbox-group'],
@@ -121,10 +121,22 @@
                         schema : dataJson,
                         name: $('#name').val(),
                         description:$('#description').val(),
-                        is_active:$('#is_active').val()
+                        is_active:$('#is_active').prop('checked') ? 1 : 0,
+                        mail_id:$('#mail_id').val() ?? null,
                     },
                     success:function(res){
+                        const mailId = $('#mail_id').val();
+                        const name = $('#name').val();
+                        const description = $('#description').val();
+                        const isActive = $('#is_active').prop('checked');
                         if (res.status == true) {
+                            if (!mailId) {
+                                $('#mail_id').val(null);
+                                $('#name').val('');
+                                $('#description').val('');
+                                $('#is_active').prop('checked', false);
+                                formBuilder.actions.clearFields();
+                            }
                             Toast.fire({
                                 icon:"success",
                                 title:res.message
@@ -139,7 +151,7 @@
                     error:function(xhr){
                         Toast.fire({
                             icon:"error",
-                            title:"gagal Simpan Data"
+                            title:xhr.responseText()
                         });
                     }
                 });

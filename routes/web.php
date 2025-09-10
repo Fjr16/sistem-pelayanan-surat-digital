@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthenticateController;
 use App\Http\Controllers\MasterController;
 use App\Http\Controllers\RekapitulasiController;
+use App\Http\Controllers\SubmissionLetterController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -42,10 +43,9 @@ Route::middleware('auth')->group(function () {
         Route::post('jenis/surat/store', [MasterController::class, 'storeMail'])->name('jenis/surat.store');
         Route::delete('jenis/surat/destroy/{id}', [MasterController::class, 'destroyMail'])->name('jenis/surat.destroy');
 
-        // Route::get('template/surat', [MasterController::class, 'indexTemplateSurat'])->name('surat/template.index');
-        // Route::get('template/surat/create', [MasterController::class, 'createTemplateSurat'])->name('surat/template.create');
-        // Route::get('template/surat/store', [MasterController::class, 'storeTemplateSurat'])->name('surat/template.store');
-        // Route::delete('template/surat/destroy', [MasterController::class, 'destroyTemplateSurat'])->name('surat/template.destroy');
+        // pengajuan surat
+        Route::get('pengajuan/surat', [SubmissionLetterController::class, 'create'])->name('pengajuan/surat.create');
+        Route::post('pengajuan/surat/store', [SubmissionLetterController::class, 'store'])->name('pengajuan/surat.store');
     // });
 
     // Route::middleware('kepsek')->group(function(){

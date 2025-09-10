@@ -42,7 +42,7 @@ class MasterController extends Controller
                 'subtype' => $row->field_type,
                 'placeholder' => $row->field_placeholder,
                 'required' => $row->is_required,
-                'values' => $row->options,
+                'values' => json_decode($row->options),
                 'min' => $row->min,
                 'max' => $row->max,
                 'maxlength' => $row->max,
@@ -92,7 +92,9 @@ class MasterController extends Controller
             $validators = Validator::make($request->all(), [
                 'name' => 'required|string',
                 'description' => 'nullable|string',
-                'schema' => 'nullable|json'
+                'schema' => 'nullable|json',
+                'mail_id' => 'nullable|exists:mails,id',
+                'is_active' => 'required'
             ]);
             if ($validators->fails()) {
                 return response()->json([
@@ -104,13 +106,17 @@ class MasterController extends Controller
             DB::beginTransaction();
 
             $decodeJson = json_decode($request->schema);
+            $mailId = $request->mail_id ?? null;
 
-            $mail = new Mail();
+            $mail = $mailId ? Mail::findOrFail($mailId) : new Mail();
 
             $mail->name = $request->name;
             $mail->description = $request->description;
-            $mail->is_active = isset($request->is_active) ? true : false;
+            $mail->is_active = $request->is_active;
             if($mail->save()){
+                if ($mailId) {
+                    $mail->mailRequirements()->delete();
+                }
                 foreach ($decodeJson as $item) {
                     $mailRequirement = new MailRequirement();
                     $mailRequirement->mail_id = $mail->id;
