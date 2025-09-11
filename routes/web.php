@@ -13,7 +13,7 @@ Route::middleware('auth')->group(function () {
     // dashboard
     Route::get('/dashboard', [MasterController::class, 'dashboard'])->name('dashboard');
 
-    Route::middleware('admin')->group(function () {
+    // Route::middleware('admin')->group(function () {
         Route::get('/user/get/data', [UserController::class, 'getData'])->name('user.getData');
         Route::post('/get/detail/user', [UserController::class, 'getDetailUser'])->name('user.getDetail');
         // Pengguna
@@ -26,7 +26,7 @@ Route::middleware('auth')->group(function () {
         Route::put('/pengguna/restore/{id}', [UserController::class, 'restore'])->name('pengguna.restore');
 
         Route::get('/profile', [UserController::class, 'profile'])->name('profile')->withoutMiddleware('admin');
-    });
+    // });
     // Route::middleware('admin')->prefix('master/')->group(function () {
         Route::get('penduduk', [MasterController::class, 'indexPenduduk'])->name('penduduk.index');
         Route::get('penduduk/create', [MasterController::class, 'createPenduduk'])->name('penduduk.create');

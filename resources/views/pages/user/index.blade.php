@@ -1,9 +1,19 @@
 @extends('layout.main')
 
+@push('page-css')
+<style>
+    .nav-tabs .nav-link {
+        border-radius: 4px;
+        font-weight: 500 !important;
+        margin-right: 5px;
+        padding: 6px 15px;
+        transition: 0.2s;
+    }
+</style>
+@endpush
 @section('content')
 
     <div class="container-xxl flex-grow-1 container-p-y pt-0">
-        <!-- Basic with Icons -->
         <div class="card">
             <div class="card-header d-flex justify-content-between">
                 <h5>Daftar {{ $title ?? 'Pengguna' }}</h5>
@@ -12,45 +22,56 @@
                 </div>
             </div>
             <div class="card-body">
-                <div class="table-responsive text-nowrap">
-                    <table class="table table-sm" id="tabel-data">
-                        <thead class="table-dark">
-                            <tr class="text-nowrap">
-                                <th>No</th>
-                                <th>Action</th>
-                                <th>Nama</th>
-                                <th>Username</th>
-                                <th>Email</th>
-                                <th>Role</th>
-                                <th>Created at</th>
-                            </tr>
-                        </thead>
-                    {{-- <tbody>
-                        @foreach ($data as $item)
-                        <tr>
-                            <td>{{ $loop->iteration }}</td>
-                            <td>{{ $item->name ?? '-' }}</td>
-                            <td>{{ $item->username ?? '-' }}</td>
-                            <td>{{ $item->email ?? '-' }}</td>
-                            <td>{{ $item->role ?? '-' }}</td>
-                            <td>
-                                <div class="d-flex">
-                                    <button type="button" class="btn btn-sm btn-warning text-white btn-icon me-1" onclick="openModalEdit('{{ $item }}')"> 
-                                        <i class="bx bx-edit"></i>
-                                    </button>
-                                    <form id="deleteForm-{{ $item->id }}" action="{{ route('master/aktor/pengguna.destroy', encrypt($item->id)) }}" method="POST">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="button" class="btn btn-sm btn-icon btn-danger text-white" onclick="confirmDelete('{{ $item->id }}')">
-                                            <i class="bx bx-trash"></i>
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody> --}}
-                    </table>
+                <!-- Tabs untuk role -->
+                <ul class="nav nav-tabs" id="roleTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active"
+                            id="tab-all"
+                            data-bs-toggle="tab"
+                            data-bs-target="#content-all"
+                            type="button"
+                            role="tab">
+                            <i class="bx bx-group"></i> All Users
+                            <span class="badge bg-secondary ms-1">All</span>
+                        </button>
+                    </li>
+                    @foreach($roles as $role)
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link"
+                                id="tab-{{ $role->id }}"
+                                data-bs-toggle="tab"
+                                data-bs-target="#content-all"
+                                type="button"
+                                role="tab">
+                                <i class="bx bx-user"></i>
+                                {{ $role->name }}
+                            </button>
+                        </li>
+                    @endforeach
+                </ul>
+
+                <div class="tab-content mt-3 px-0">
+                    <div class="tab-pane fade show active" id="content-all" role="tabpanel">
+                        <div class="table-responsive text-nowrap">
+                            <table class="table table-sm" id="tabel-data">
+                                <thead class="table-dark">
+                                    <tr class="text-nowrap">
+                                        <th>Action</th>
+                                        <th>Nama</th>
+                                        <th>Username</th>
+                                        <th>Email</th>
+                                        <th>Jenis Kelamin</th>
+                                        <th>No. HP / WA</th>
+                                        <th>NIK</th>
+                                        <th>Tempat Tgl Lahir</th>
+                                        <th>Status Kawin</th>
+                                        <th>Role</th>
+                                        <th>Aktif</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -90,10 +111,10 @@
                             <label class="col-sm-2 col-form-label" for="password">Password *</label>
                             <div class="col-sm-10">
                                 <div class="input-group input-group-merge">
-                                    <input 
-                                    type="password" 
-                                    class="form-control" 
-                                    id="password" 
+                                    <input
+                                    type="password"
+                                    class="form-control"
+                                    id="password"
                                     name="password"
                                     placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
                                     aria-describedby="password"
@@ -103,14 +124,14 @@
                             </div>
                         </div>
                         <div class="row mb-6">
-                            <label class="col-sm-2 col-form-label" for="role">Role *</label>
+                            <label class="col-sm-2 col-form-label" for="role_id">Role *</label>
                             <div class="col-sm-10">
-                                <select name="role" class="form-control" id="role" required>
-                                    @foreach ($arrRole as $role)
-                                        @if (old('role') === $role)
-                                            <option value="{{ $role }}" selected>{{ $role }}</option>
+                                <select name="role_id" class="form-control" id="role_id" required>
+                                    @foreach ($roles as $role)
+                                        @if (old('role_id') === $role->id)
+                                            <option value="{{ $role->id }}" selected>{{ $role->name }}</option>
                                         @else
-                                            <option value="{{ $role }}">{{ $role }}</option>
+                                            <option value="{{ $role->id }}">{{ $role->name }}</option>
                                         @endif
                                     @endforeach
                                 </select>
@@ -160,10 +181,10 @@
                             <label class="col-sm-2 col-form-label" for="password">Password *</label>
                             <div class="col-sm-10">
                                 <div class="input-group input-group-merge">
-                                    <input 
-                                    type="password" 
-                                    class="form-control" 
-                                    id="password" 
+                                    <input
+                                    type="password"
+                                    class="form-control"
+                                    id="password"
                                     name="password"
                                     placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
                                     aria-describedby="password"
@@ -174,14 +195,14 @@
                             </div>
                         </div>
                         <div class="row mb-6">
-                            <label class="col-sm-2 col-form-label" for="role">Role *</label>
+                            <label class="col-sm-2 col-form-label" for="role_id">Role *</label>
                             <div class="col-sm-10">
-                                <select name="role" class="form-control" id="role" required>
-                                    @foreach ($arrRole as $role)
-                                        @if (old('role') === $role)
-                                            <option value="{{ $role }}" selected>{{ $role }}</option>
+                                <select name="role_id" class="form-control" id="role_id" required>
+                                    @foreach ($roles as $role)
+                                        @if (old('role_id') === $role->id)
+                                            <option value="{{ $role->id }}" selected>{{ $role->name }}</option>
                                         @else
-                                            <option value="{{ $role }}">{{ $role }}</option>
+                                            <option value="{{ $role->id }}">{{ $role->name }}</option>
                                         @endif
                                     @endforeach
                                 </select>
@@ -196,25 +217,24 @@
             </form>
         </div>
     </div>
-    
+
 
     @push('page-js')
     <script>
+        var table;
+        var selectedRoleId = "";
+
         $(document).ready(function(){
-            renderTable();
-        });
-        function renderTable(){
-            $('#tabel-data').DataTable({
+            table = $('#tabel-data').DataTable({
                 processing:true,
                 serverSide:true,
-                ajax:"{{ route('user.getData') }}",
+                ajax:{
+                    url:"{{ route('user.getData') }}",
+                    data: function(d){
+                        d.role_id = selectedRoleId;
+                    }
+                },
                 columns:[
-                    {
-                        data:'DT_RowIndex',
-                        name:'DT_RowIndex',
-                        orderable:false,
-                        searchable:false
-                    },
                     {
                         data:'action',
                         name:'action',
@@ -234,16 +254,46 @@
                         name:'email'
                     },
                     {
-                        data:'role',
-                        name:'role'
+                        data:'gender',
+                        name:'gender'
                     },
                     {
-                        data:'created_at',
-                        name:'created_at'
+                        data:'no_wa',
+                        name:'no_wa'
+                    },
+                    {
+                        data:'nik',
+                        name:'nik'
+                    },
+                    {
+                        data:'ttl',
+                        name:'ttl'
+                    },
+                    {
+                        data:'status_kawin',
+                        name:'status_kawin'
+                    },
+                    {
+                        data:'role.name',
+                        name:'role.name'
+                    },
+                    {
+                        data:'is_active',
+                        name:'is_active'
                     }
                 ]
             });
-        }
+
+            $('#roleTabs button').on('click', function(){
+                var tabId = $(this).attr('id');
+                if (tabId === 'tab-all') {
+                    selectedRoleId = "";
+                }else{
+                    selectedRoleId = tabId.replace('tab-', '');
+                }
+                table.ajax.reload();
+            });
+        });
     </script>
 
     {{-- konfirmasi modal delete --}}
@@ -277,7 +327,7 @@
                 var editModal = document.getElementById('editModal');
                 var form = editModal.querySelector('form');
                 var actionTemplate = form.getAttribute('data-action');
-                
+
                 $.ajax({
                     url:"{{ route('user.getDetail') }}",
                     type:'post',
@@ -293,8 +343,8 @@
                             form.querySelector('#name').value = item.name;
                             form.querySelector('#username').value = item.username;
                             form.querySelector('#email').value = item.email;
-                            form.querySelector('#role').value = item.role;
-                            
+                            form.querySelector('#role_id').value = item.role_id;
+
                             var modalEdit = new bootstrap.Modal(editModal);
                             modalEdit.show();
                         }else{

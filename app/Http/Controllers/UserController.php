@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Role;
 use App\Models\User;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -15,7 +16,11 @@ class UserController extends Controller
 {
 
     public function getData(){
-        $data = User::query();
+        $roleId = request()->get('role_id');
+        $data = User::with('role')
+        ->when($roleId, function($q) use ($roleId){
+            return $q->where('role_id', $roleId);
+        });
 
         return DataTables::of($data)
             ->addIndexColumn()
@@ -29,12 +34,19 @@ class UserController extends Controller
                             </form>';
                 return $editBtn . $deleteBtn;
             })
+            ->addColumn('ttl', function($item){
+                $tempat = $item->tempat_lhr ?? '-';
+                $tgl = $item->tanggal_lhr ?? '00-00-00';
+                return $tempat . ', ' . $tgl;
+            })
             // mengubah format tanggal
-            ->editColumn('created_at', function($item){
-                return $item->created_at->format('d-m-Y H:i');
+            ->editColumn('is_active', function($item){
+                $bg = $item->i_active ? 'success' : 'danger';
+                $icon = $item->i_active ? 'check' : 'x';
+                return '<span class="p-0 badge bg-'. $bg . '"><i class="p-0 bx bx-'. $icon .'" style="font-size:30px;"></i></span>';
             })
             // agar kolom aksi tidak disaring/sorting
-            ->rawColumns(['action'])//wajib render html
+            ->rawColumns(['action', 'is_active'])//wajib render html
             ->make(true);
     }
 
@@ -59,7 +71,7 @@ class UserController extends Controller
                 'message' => 'Failed: Terjadi kesalahan Sistem, error: ' . $e->getMessage(),
             ]);
         }
-        
+
     }
 
     public function profile() {
@@ -67,7 +79,7 @@ class UserController extends Controller
             'Pria',
             'Wanita',
         ];
-        
+
         return view('pages.user.profile.index', [
             'arrJk' => $arrJk,
         ]);
@@ -79,15 +91,11 @@ class UserController extends Controller
     public function index()
     {
         $data = User::all();
-        $arrRole = [
-            'Kepala Sekolah',
-            'Guru',
-            'Administrator',
-        ];
+        $roles = Role::all();
         return view('pages.user.index', [
             'title' => 'Pengguna',
             'data' => $data,
-            'arrRole' => $arrRole,
+            'roles' => $roles,
         ]);
     }
 

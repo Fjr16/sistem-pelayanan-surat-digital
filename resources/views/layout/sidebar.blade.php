@@ -86,26 +86,12 @@
         <span class="menu-header-text">Master Data</span>
       </li>
       <!-- Person -->
-      @can('admin')
-      <li class="menu-item {{ Route::is('master/aktor/*') ? 'open active' : '' }}">
-        <a href="javascript:void(0);" class="menu-link menu-toggle">
-          <i class="menu-icon tf-icons bx bx-group"></i>
-          <div class="text-truncate" data-i18n="Aktor">Aktor</div>
+    <li class="menu-item {{ Route::is('master/aktor/pengguna.*') ? 'active' : '' }}">
+        <a href="{{ route('master/aktor/pengguna.index') }}" class="menu-link">
+            <i class="menu-icon tf-icons bx bx-group"></i>
+            <div class="text-truncate" data-i18n="Akun Pengguna">Manajemen User</div>
         </a>
-        <ul class="menu-sub">
-          <li class="menu-item {{ Route::is('penduduk.*') ? 'active' : '' }}">
-            <a href="" class="menu-link">
-              <div class="text-truncate" data-i18n="penduduk">Penduduk</div>
-            </a>
-          </li>
-          <li class="menu-item {{ Route::is('master/aktor/pengguna.*') ? 'active' : '' }}">
-            <a href="{{ route('master/aktor/pengguna.index') }}" class="menu-link">
-              <div class="text-truncate" data-i18n="Akun Pengguna">Akun Pengguna</div>
-            </a>
-          </li>
-        </ul>
-      </li>
-      @endcan
+    </li>
       {{-- Jenis Surat --}}
       <li class="menu-item {{ Route::is('jenis/surat.*') ? 'active' : '' }}">
         <a href="{{ route('jenis/surat.index') }}"
