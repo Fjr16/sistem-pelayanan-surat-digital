@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignId('mail_id')->nullable(false);
             $table->string('file_path')->nullable();
             $table->datetime('send_at')->nullable(false);
-            $table->enum('status', ['pending', 'on process', 'sent', 'cancel', 'rejected'])->default('pending')->nullable(false);
+            $table->string('status')->default('PENDING')->nullable(false);
             $table->text('keterangan')->nullable();
             $table->timestamps();
         });

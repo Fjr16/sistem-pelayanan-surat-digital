@@ -77,9 +77,45 @@
       <li class="menu-item {{ Route::is('pengajuan/surat.*') ? 'active' : '' }}">
         <a href="{{ route('pengajuan/surat.create') }}" class="menu-link">
           <i class="menu-icon tf-icons bx bx-mail-send"></i>
-          <div class="text-truncate" data-i18n="Surat">Pengajuan Surat</div>
+          <div class="text-truncate" data-i18n="Surat">Ajukan Surat</div>
         </a>
       </li>
+      {{-- Surat Saya --}}
+      <li class="menu-item {{ Route::is('surat/saya.*') ? 'active' : '' }}">
+        <a href="{{ route('surat/saya.index') }}" class="menu-link">
+          <i class="menu-icon tf-icons bx bx-archive"></i>
+          <div class="text-truncate" data-i18n="Surat">Surat Saya</div>
+        </a>
+      </li>
+    {{-- Proses Surat --}}
+    <li class="menu-item {{ Route::is('proses/surat*') ? 'active open' : '' }}">
+        <a href="javascript:void(0);" class="menu-link menu-toggle">
+            <i class="menu-icon tf-icons bx bx-task"></i>
+            <div class="text-truncate" data-i18n="Surat">Proses Surat</div>
+        </a>
+
+        <ul class="menu-sub">
+            {{-- Verifikasi Surat --}}
+            <li class="menu-item {{ Route::is('proses/surat/verifikasi.*') ? 'active' : '' }}">
+                <a href="{{ route('proses/surat/verifikasi.index') }}" class="menu-link">
+                    <div data-i18n="Verifikasi Surat">Verifikasi Surat</div>
+                </a>
+            </li>
+            {{-- Upload Surat --}}
+            <li class="menu-item {{ Route::is('proses/surat/upload.*') ? 'active' : '' }}">
+                <a href="{{ route('proses/surat/upload.index') }}" class="menu-link">
+                    <div data-i18n="Upload Surat">Upload Surat</div>
+                </a>
+            </li>
+            {{-- Pengesahan Surat --}}
+            <li class="menu-item {{ Route::is('proses/surat/pengesahan.*') ? 'active' : '' }}">
+                <a href="{{ route('proses/surat/pengesahan.index') }}" class="menu-link">
+                    <div data-i18n="Kirim Surat">Kirim Surat</div>
+                </a>
+            </li>
+        </ul>
+    </li>
+
 
       {{-- master data --}}
       <li class="menu-header small text-uppercase">
@@ -97,7 +133,7 @@
         <a href="{{ route('jenis/surat.index') }}"
           class="menu-link">
           <i class="menu-icon tf-icons bx bx-category"></i>
-          <div class="text-truncate" data-i18n="Jenis Surat">Jenis Surat</div>
+          <div class="text-truncate" data-i18n="Jenis Surat">Manajemen Surat</div>
         </a>
       </li>
 

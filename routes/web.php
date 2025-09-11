@@ -46,6 +46,18 @@ Route::middleware('auth')->group(function () {
         // pengajuan surat
         Route::get('pengajuan/surat', [SubmissionLetterController::class, 'create'])->name('pengajuan/surat.create');
         Route::post('pengajuan/surat/store', [SubmissionLetterController::class, 'store'])->name('pengajuan/surat.store');
+        // Surat Saya
+        Route::get('surat/saya', [SubmissionLetterController::class, 'index'])->name('surat/saya.index');
+
+        // Proses Surat
+        Route::get('proses/surat/verifikasi', [SubmissionLetterController::class, 'create'])->name('proses/surat/verifikasi.index');
+        Route::post('proses/surat/verifikasi/store', [SubmissionLetterController::class, 'store'])->name('proses/surat/verifikasi.store');
+
+        Route::get('proses/surat/upload', [SubmissionLetterController::class, 'create'])->name('proses/surat/upload.index');
+        Route::post('proses/surat/upload/store', [SubmissionLetterController::class, 'store'])->name('proses/surat/upload.store');
+
+        Route::get('proses/surat/pengesahan', [SubmissionLetterController::class, 'create'])->name('proses/surat/pengesahan.index');
+        Route::post('proses/surat/pengesahan/store', [SubmissionLetterController::class, 'store'])->name('proses/surat/pengesahan.store');
     // });
 
     // Route::middleware('kepsek')->group(function(){
