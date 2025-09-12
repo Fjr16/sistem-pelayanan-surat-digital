@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('penduduk_id')->nullable(false);
             $table->foreignId('mail_id')->nullable(false);
             $table->string('file_path')->nullable();
-            $table->datetime('send_at')->nullable(false);
+            $table->datetime('send_at')->nullable();
             $table->string('status')->default('PENDING')->nullable(false);
             $table->text('keterangan')->nullable();
             $table->timestamps();

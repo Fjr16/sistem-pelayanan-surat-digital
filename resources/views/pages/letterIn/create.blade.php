@@ -228,19 +228,19 @@
                 if (res.status) {
                     Toast.fire({
                         icon:"success",
-                        title:res.message,
+                        text:res.message,
                     });
                 }else{
                     Toast.fire({
                         icon:"error",
-                        title:res.message,
+                        text:res.message,
                     });
                 }
             },
             error:function(xhr){
                 Toast.fire({
                     icon:"error",
-                    title:(xhr.responseText() || "").slice(0,150),
+                    text:(xhr.responseText() || "").slice(0,150),
                 });
             }
         });
