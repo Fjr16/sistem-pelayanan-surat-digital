@@ -34,13 +34,30 @@
     .theme-4 { background: #f6c23e; }
     .theme-5 { background: #36b9cc; }
     .theme-6 { background: #6f42c1; }
+
+    .card-overlay {
+        position: absolute;
+        inset: 0; /* full cover */
+        background: rgba(0, 0, 0, 0.5); /* lapisan gelap transparan */
+        border-radius: inherit;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        z-index: 5;
+    }
+
+    .surat-card:hover .card-overlay {
+        opacity: 1;
+    }
+    .swal2-container {
+        z-index: 20000 !important; /* lebih besar dari modal fullscreen */
+    }
 </style>
 @endpush
 @section('content')
 <div class="container-xxl flex-grow-1 container-p-y pt-0">
     <h3 class="mb-4 text-center">Daftar Jenis Surat</h3>
     <div class="row g-4">
-        @foreach ($data as $item)    
+        @foreach ($data as $item)
         @php
             $icons = [
                 'bx bx-home',
@@ -58,7 +75,7 @@
             $randomIcon = $icons[array_rand($icons)];
         @endphp
             <div class="col-sm-6 col-lg-4">
-                <div class="card surat-card {{ $item->is_active ? '' : 'disabled-card' }} h-100 border-0 shadow-sm" data-id="1">
+                <div class="card surat-card {{ $item->is_active ? '' : 'disabled-card' }} h-100 border-0 shadow-sm" data-id="{{ $item->id }}">
                     <div class="card-body d-flex align-items-start">
                         <div class="icon-wrapper theme-{{ rand(1,6) }}">
                             <i class="{{ $randomIcon }}"></i>
@@ -71,60 +88,162 @@
                             <span class="badge bg-{{ $item->is_active ? 'success' : 'secondary' }}">{{ $item->is_active ? 'Tersedia' : 'Tidak Tersedia' }}</span>
                         </div>
                     </div>
+
+                     {{-- Overlay transparan dengan tombol --}}
+                    <div class="card-overlay d-flex justify-content-center align-items-center gap-2">
+                        <button class="btn btn-sm btn-light" onclick="showDetail({{ $item->id }}, '{{ $item->name }}', `{{ $item->description }}`)">
+                            <i class="bx bx-info-circle"></i> Detail
+                        </button>
+                        <button class="btn btn-sm btn-primary" onclick="modalPengajuan({{ $item->id }})">
+                            <i class="bx bx-send"></i> Ajukan
+                        </button>
+                    </div>
                 </div>
             </div>
         @endforeach
     </div>
 </div>
+
+{{-- modal detail --}}
+<div class="modal fade" id="modal-show" tabindex="-1" aria-labelledby="modalScrollableTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modal-show-name"></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+        </button>
+      </div>
+      <div class="modal-body" id="modal-show-body"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" id="btn-submit-show"> <i class="bx bx-send"></i> Ajukan Sekarang</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{{-- modal pengajuan --}}
+<div class="modal fade" id="modal-pengajuan" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-fullscreen" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="modal-pengajuan-title"></h5>
+        </div>
+        <div class="modal-body">
+            <form method="POST" id="modal-pengajuan-form">
+                @csrf
+                <input type="hidden" id="modal-pengajuan-mail_id" name="mail_id">
+                <div id="modal-pengajuan-body"></div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Kembali</button>
+            <button type="button" class="btn btn-primary" onclick="submitPengajuan()">Simpan Pengajuan</button>
+        </div>
+    </div>
+  </div>
+</div>
 @endsection
 
-@push('scripts')
+@push('page-js')
+ {{-- cdn form render --}}
+<script src="https://formbuilder.online/assets/js/form-render.min.js"></script>
 <script>
-$(function(){
-    // Step 1: pilih jenis surat
-    $('#jenis_surat').on('change', function(){
-        if ($(this).val()) {
-            $('#btn-next').prop('disabled', false);
-        } else {
-            $('#btn-next').prop('disabled', true);
+    function showDetail(mailId, mailName, mailDesc){
+        if (!mailId) {
+            Toast.fire({
+                icon: "error",
+                title: "Surat Tidak Ditemukan",
+            });
+            return;
         }
-    });
 
-    // Next ke Step 2
-    $('#btn-next').on('click', function(){
-        let suratId = $('#jenis_surat').val();
-        $('#jenis_surat_id').val(suratId);
+        $('#modal-show-name').text(mailName);
+        $('#modal-show-body').html(mailDesc);
+        $('#btn-submit-show').off('click').on('click', function(){
+            $('#modal-show').modal('hide');
+            modalPengajuan(mailId);
+        });
+        $('#modal-show').modal('show');
+    }
 
-        // Load form persyaratan via ajax
-        $.get("{{ url('jenis-surat/schema') }}/" + suratId, function(res){
-            if (res.schema) {
-                var renderWrap = $('#form-persyaratan');
-                renderWrap.empty();
+    function modalPengajuan(mailId){
+        if (!mailId) {
+            Toast.fire({
+                icon: "error",
+                title: "Surat Tidak Ditemukan",
+            });
+            return;
+        }
 
-                // render formBuilder data → formRender
-                var formRender = $('<div/>');
-                formRender.formRender({
-                    dataType: 'json',
-                    formData: res.schema
+        $.get("{{ url('pengajuan/surat/get/schema') }}/" + mailId, function(res){
+            if (res.status) {
+                if (!res.data) {
+                    Toast.fire({
+                        icon: "error",
+                        title: "Terjadi Kesalahan, Data surat tidak ditemukan",
+                        position:'bottom-end'
+                    });
+                }else{
+                    const mail = res.data.mail;
+                    const schema = res.data.mailRequirements;
+                    if (schema) {
+                        var renderWrap = $('#modal-pengajuan-body');
+                        renderWrap.empty();
+
+                        var formRender = $('<div/>');
+                        formRender.formRender({
+                            dataType: 'json',
+                            formData: schema
+                        });
+                        renderWrap.append(formRender);
+                    }
+                    $('#modal-pengajuan-mail_id').val(mail.id);
+                    $('#modal-pengajuan-title').text('Pengajuan ' + mail.name);
+                    $('#modal-pengajuan').modal('show');
+                }
+            }else{
+                Toast.fire({
+                    icon: "error",
+                    title: "Terjadi Kesalahan, " + res.message,
+                    position:'bottom-end'
                 });
-                renderWrap.append(formRender);
             }
         });
+    }
 
-        // ganti tab
-        $('#step1-tab').removeClass('active');
-        $('#step1').removeClass('show active');
-        $('#step2-tab').removeClass('disabled').addClass('active');
-        $('#step2').addClass('show active');
-    });
-
-    // Back ke Step 1
-    $('#btn-back').on('click', function(){
-        $('#step2-tab').removeClass('active');
-        $('#step2').removeClass('show active');
-        $('#step1-tab').addClass('active');
-        $('#step1').addClass('show active');
-    });
-});
+    function submitPengajuan(){
+        const form = document.getElementById('modal-pengajuan-form');
+        const btn = document.getElementById('submit-pengajuan');
+        let formData = new FormData(form);
+        // for (let [key, value] of formData.entries()) {
+        //     console.log(key, value);
+        // }
+        $.ajax({
+            url: "{{ route('pengajuan/surat.store') }}",
+            type:"POST",
+            data:formData,
+            processData:false,
+            contentType:false,
+            success:function(res){
+                if (res.status) {
+                    Toast.fire({
+                        icon:"success",
+                        title:res.message,
+                    });
+                }else{
+                    Toast.fire({
+                        icon:"error",
+                        title:res.message,
+                    });
+                }
+            },
+            error:function(xhr){
+                Toast.fire({
+                    icon:"error",
+                    title:(xhr.responseText() || "").slice(0,150),
+                });
+            }
+        });
+    }
 </script>
 @endpush

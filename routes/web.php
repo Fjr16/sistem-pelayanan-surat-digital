@@ -46,6 +46,7 @@ Route::middleware('auth')->group(function () {
         // pengajuan surat
         Route::get('pengajuan/surat', [SubmissionLetterController::class, 'create'])->name('pengajuan/surat.create');
         Route::post('pengajuan/surat/store', [SubmissionLetterController::class, 'store'])->name('pengajuan/surat.store');
+        Route::get('pengajuan/surat/get/schema/{id}', [SubmissionLetterController::class, 'getSchema'])->name('pengajuan/surat.getSchema');
         // Surat Saya
         Route::get('surat/saya', [SubmissionLetterController::class, 'index'])->name('surat/saya.index');
 

@@ -68,7 +68,7 @@
     </div>
     <!-- / Layout wrapper -->
 
-    
+
     {{-- scripts --}}
     {{-- vendor js --}}
     @push('vendor-js')
