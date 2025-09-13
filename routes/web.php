@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthenticateController;
+use App\Http\Controllers\LetterProcessController;
 use App\Http\Controllers\MasterController;
 use App\Http\Controllers\RekapitulasiController;
 use App\Http\Controllers\SubmissionLetterController;
@@ -28,15 +29,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/profile', [UserController::class, 'profile'])->name('profile')->withoutMiddleware('admin');
     // });
     // Route::middleware('admin')->prefix('master/')->group(function () {
-        Route::get('penduduk', [MasterController::class, 'indexPenduduk'])->name('penduduk.index');
-        Route::get('penduduk/create', [MasterController::class, 'createPenduduk'])->name('penduduk.create');
-        Route::post('penduduk/store', [MasterController::class, 'storePenduduk'])->name('penduduk.store');
-        Route::delete('penduduk/destroy', [MasterController::class, 'destroyPenduduk'])->name('penduduk.destroy');
-
-        // Route::get('surat', [MasterController::class, 'indexSurat'])->name('surat.index');
-        // Route::get('surat/create', [MasterController::class, 'createSurat'])->name('surat.create');
-        // Route::post('surat/store', [MasterController::class, 'storeSurat'])->name('surat.store');
-        // Route::delete('surat/destroy', [MasterController::class, 'destroySurat'])->name('surat.destroy');
+        // Route::get('penduduk', [MasterController::class, 'indexPenduduk'])->name('penduduk.index');
+        // Route::get('penduduk/create', [MasterController::class, 'createPenduduk'])->name('penduduk.create');
+        // Route::post('penduduk/store', [MasterController::class, 'storePenduduk'])->name('penduduk.store');
+        // Route::delete('penduduk/destroy', [MasterController::class, 'destroyPenduduk'])->name('penduduk.destroy');
 
         Route::get('jenis/surat', [MasterController::class, 'indexMail'])->name('jenis/surat.index');
         Route::get('jenis/surat/create', [MasterController::class, 'createMail'])->name('jenis/surat.create');
@@ -53,14 +49,16 @@ Route::middleware('auth')->group(function () {
         Route::post('surat/saya/update/status', [SubmissionLetterController::class, 'updateStatusPengajuan'])->name('surat/saya/update.status');
 
         // Proses Surat
-        Route::get('proses/surat/verifikasi', [SubmissionLetterController::class, 'create'])->name('proses/surat/verifikasi.index');
-        Route::post('proses/surat/verifikasi/store', [SubmissionLetterController::class, 'store'])->name('proses/surat/verifikasi.store');
+        Route::get('proses/surat/verifikasi', [LetterProcessController::class, 'indexVerifikasi'])->name('proses/surat/verifikasi.index');
+        Route::get('proses/surat/verifikasi/show', [LetterProcessController::class, 'getSuratVerifikasi'])->name('proses/surat/verifikasi.show');
+        Route::post('proses/surat/verifikasi/store', [LetterProcessController::class, 'store'])->name('proses/surat/verifikasi.store');
 
-        Route::get('proses/surat/upload', [SubmissionLetterController::class, 'create'])->name('proses/surat/upload.index');
-        Route::post('proses/surat/upload/store', [SubmissionLetterController::class, 'store'])->name('proses/surat/upload.store');
+        Route::get('proses/surat/upload', [LetterProcessController::class, 'indexUpload'])->name('proses/surat/upload.index');
+        Route::get('proses/surat/upload/show', [LetterProcessController::class, 'showUpload'])->name('proses/surat/upload.show');
+        Route::post('proses/surat/upload/store', [LetterProcessController::class, 'store'])->name('proses/surat/upload.store');
 
-        Route::get('proses/surat/pengesahan', [SubmissionLetterController::class, 'create'])->name('proses/surat/pengesahan.index');
-        Route::post('proses/surat/pengesahan/store', [SubmissionLetterController::class, 'store'])->name('proses/surat/pengesahan.store');
+        Route::get('proses/surat/pengesahan', [LetterProcessController::class, 'create'])->name('proses/surat/pengesahan.index');
+        Route::post('proses/surat/pengesahan/store', [LetterProcessController::class, 'store'])->name('proses/surat/pengesahan.store');
     // });
 
     // Route::middleware('kepsek')->group(function(){
