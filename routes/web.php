@@ -49,6 +49,8 @@ Route::middleware('auth')->group(function () {
         Route::get('pengajuan/surat/get/schema/{id}', [SubmissionLetterController::class, 'getSchema'])->name('pengajuan/surat.getSchema');
         // Surat Saya
         Route::get('surat/saya', [SubmissionLetterController::class, 'index'])->name('surat/saya.index');
+        Route::get('surat/saya/show', [SubmissionLetterController::class, 'getSuratSaya'])->name('surat/saya.show');
+        Route::post('surat/saya/update/status', [SubmissionLetterController::class, 'updateStatusPengajuan'])->name('surat/saya/update.status');
 
         // Proses Surat
         Route::get('proses/surat/verifikasi', [SubmissionLetterController::class, 'create'])->name('proses/surat/verifikasi.index');

@@ -32,6 +32,11 @@
 <link rel="stylesheet" href="{{ asset('/assets/vendor/libs/apex-charts/apex-charts.css') }}" />
 
 <!-- Page CSS -->
+<style>
+    .swal2-container{
+        z-index: 20000 !important;
+    }
+</style>
 @stack('page-css')
 
 

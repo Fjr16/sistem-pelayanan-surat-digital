@@ -152,7 +152,7 @@
         if (!mailId) {
             Toast.fire({
                 icon: "error",
-                title: "Surat Tidak Ditemukan",
+                text: "Surat Tidak Ditemukan",
             });
             return;
         }
@@ -170,7 +170,7 @@
         if (!mailId) {
             Toast.fire({
                 icon: "error",
-                title: "Surat Tidak Ditemukan",
+                text: "Surat Tidak Ditemukan",
             });
             return;
         }
@@ -180,8 +180,7 @@
                 if (!res.data) {
                     Toast.fire({
                         icon: "error",
-                        title: "Terjadi Kesalahan, Data surat tidak ditemukan",
-                        position:'bottom-end'
+                        text: "Terjadi Kesalahan, Data surat tidak ditemukan",
                     });
                 }else{
                     const mail = res.data.mail;
@@ -204,8 +203,7 @@
             }else{
                 Toast.fire({
                     icon: "error",
-                    title: "Terjadi Kesalahan, " + res.message,
-                    position:'bottom-end'
+                    text: "Terjadi Kesalahan, " + res.message,
                 });
             }
         });
@@ -215,9 +213,6 @@
         const form = document.getElementById('modal-pengajuan-form');
         const btn = document.getElementById('submit-pengajuan');
         let formData = new FormData(form);
-        // for (let [key, value] of formData.entries()) {
-        //     console.log(key, value);
-        // }
         $.ajax({
             url: "{{ route('pengajuan/surat.store') }}",
             type:"POST",
@@ -230,6 +225,10 @@
                         icon:"success",
                         text:res.message,
                     });
+                    form.reset();
+                    setTimeout(() => {
+                        window.location.href = "{{ route('surat/saya.index') }}";
+                    }, 2000);
                 }else{
                     Toast.fire({
                         icon:"error",

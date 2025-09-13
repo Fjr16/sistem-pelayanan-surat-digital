@@ -2,13 +2,6 @@
 
 @push('page-css')
 <style>
-    /* .nav-tabs .nav-link {
-        border-radius: 4px;
-        font-weight: 500 !important;
-        margin-right: 5px;
-        padding: 6px 15px;
-        transition: 0.2s;
-    } */
     .nav-tabs .nav-link {
         border: none;
         border-bottom: 3px solid transparent;
@@ -20,13 +13,7 @@
 
     .nav-tabs .nav-link:hover {
         background-color: rgba(0,0,0,0.05);
-        /* border-radius: 8px 8px 0 0; */
     }
-
-    /* .nav-tabs .nav-link.active {
-        border-bottom: 3px solid currentColor;
-        background-color: rgba(0,0,0,0.03);
-    } */
 
     .nav-tabs .nav-link.active {
         background-color: rgba(0, 0, 0, 0.03);
@@ -48,50 +35,74 @@
                 <ul class="nav nav-tabs nav-fill" id="roleTabs" role="tablist">
                     <li class="nav-item" role="presentation">
                         <button class="nav-link active d-flex align-items-center px-4 py-2 rounded shadow-sm me-2"
-                            id="tab-pending"
+                            id="tab-{{ \App\Enums\ProcessStatus::pending->value }}"
                             data-bs-toggle="tab"
                             data-bs-target="#content"
                             type="button"
                             role="tab">
                             <i class="bx bx-hourglass me-2"></i>
                             <span class="fw-semibold">Verifikasi</span>
-                            <span class="badge bg-warning text-dark rounded-pill ms-2 text-white">4</span>
+                            <span class="badge bg-warning text-dark rounded-pill ms-2 text-white">{{ $countSurat->pendingCount }}</span>
                         </button>
                     </li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link d-flex align-items-center px-4 py-2 rounded shadow-sm me-2"
-                            id="tab-process"
+                            id="tab-{{ \App\Enums\ProcessStatus::process->value }}"
                             data-bs-toggle="tab"
                             data-bs-target="#content"
                             type="button"
                             role="tab">
                             <i class="bx bx-loader-circle me-2"></i>
                             <span class="fw-semibold">Dalam Pengerjaan</span>
-                            <span class="badge bg-info text-dark rounded-pill ms-2 text-white">4</span>
+                            <span class="badge bg-info text-dark rounded-pill ms-2 text-white">{{ $countSurat->processCount }}</span>
                         </button>
                     </li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link d-flex align-items-center px-4 py-2 rounded shadow-sm me-2"
-                            id="tab-rejected"
+                            id="tab-{{ \App\Enums\ProcessStatus::finish->value }}"
+                            data-bs-toggle="tab"
+                            data-bs-target="#content"
+                            type="button"
+                            role="tab">
+                            <i class="bx bx-loader-circle me-2"></i>
+                            <span class="fw-semibold">Pengesahan</span>
+                            <span class="badge bg-primary text-dark rounded-pill ms-2 text-white">{{ $countSurat->finishCount }}</span>
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link d-flex align-items-center px-4 py-2 rounded shadow-sm me-2"
+                            id="tab-{{ \App\Enums\ProcessStatus::rejected->value }}"
                             data-bs-toggle="tab"
                             data-bs-target="#content"
                             type="button"
                             role="tab">
                             <i class="bx bx-block me-2"></i>
                             <span class="fw-semibold">Ditolak</span>
-                            <span class="badge bg-danger text-dark rounded-pill ms-2 text-white">4</span>
+                            <span class="badge bg-danger text-dark rounded-pill ms-2 text-white">{{ $countSurat->rejectedCount }}</span>
                         </button>
                     </li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link d-flex align-items-center px-4 py-2 rounded shadow-sm me-2"
-                            id="tab-process"
+                            id="tab-{{ \App\Enums\ProcessStatus::cancel->value }}"
                             data-bs-toggle="tab"
                             data-bs-target="#content"
                             type="button"
                             role="tab">
                             <i class="bx bx-minus-circle me-2"></i>
                             <span class="fw-semibold">Dibatalkan</span>
-                            <span class="badge bg-secondary text-dark rounded-pill ms-2 text-white">4</span>
+                            <span class="badge bg-secondary text-dark rounded-pill ms-2 text-white">{{ $countSurat->cancelCount }}</span>
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link d-flex align-items-center px-4 py-2 rounded shadow-sm me-2"
+                            id="tab-{{ \App\Enums\ProcessStatus::sent->value }}"
+                            data-bs-toggle="tab"
+                            data-bs-target="#content"
+                            type="button"
+                            role="tab">
+                            <i class="bx bx-check-circle me-2"></i>
+                            <span class="fw-semibold">Selesai</span>
+                            <span class="badge bg-success text-dark rounded-pill ms-2 text-white">{{ $countSurat->sentCount }}</span>
                         </button>
                     </li>
                 </ul>
@@ -103,16 +114,12 @@
                                 <thead class="table-dark">
                                     <tr class="text-nowrap">
                                         <th>Action</th>
-                                        <th>Nama</th>
-                                        <th>Username</th>
-                                        <th>Email</th>
-                                        <th>Jenis Kelamin</th>
-                                        <th>No. HP / WA</th>
-                                        <th>NIK</th>
-                                        <th>Tempat Tgl Lahir</th>
-                                        <th>Status Kawin</th>
-                                        <th>Role</th>
-                                        <th>Aktif</th>
+                                        <th>Nama Surat</th>
+                                        <th>Diajukan Pada</th>
+                                        <th>Selesai Pada</th>
+                                        <th>Diajukan Penduduk</th>
+                                        <th>Dibantu Petugas</th>
+                                        <th>Ket</th>
                                     </tr>
                                 </thead>
                             </table>
@@ -133,9 +140,9 @@
                 processing:true,
                 serverSide:true,
                 ajax:{
-                    url:"{{ route('user.getData') }}",
+                    url:"{{ route('surat/saya.show') }}",
                     data: function(d){
-                        d.role_id = status;
+                        d.status = status;
                     }
                 },
                 columns:[
@@ -146,45 +153,36 @@
                         searchable:false
                     },
                     {
-                        data:'name',
-                        name:'name'
+                        data:'mail_name',
+                        name:'mail_name'
                     },
                     {
-                        data:'username',
-                        name:'username'
+                        data:'incoming_mails.created_at',
+                        name:'incoming_mails.created_at'
                     },
                     {
-                        data:'email',
-                        name:'email'
+                        data:'incoming_mails.send_at',
+                        name:'incoming_mails.send_at',
+                        'defaultContent' : '---, -:-'
                     },
                     {
-                        data:'gender',
-                        name:'gender'
+                        data:'penduduk_name',
+                        name:'penduduk_name',
+                        'defaultContent' : '-'
                     },
                     {
-                        data:'no_wa',
-                        name:'no_wa'
+                        data:'petugas_name',
+                        name:'petugas_name',
+                        'defaultContent' : '-'
                     },
                     {
-                        data:'nik',
-                        name:'nik'
+                        data:'keterangan',
+                        name:'keterangan',
+                        'defaultContent' : '-'
                     },
-                    {
-                        data:'ttl',
-                        name:'ttl'
-                    },
-                    {
-                        data:'status_kawin',
-                        name:'status_kawin'
-                    },
-                    {
-                        data:'role.name',
-                        name:'role.name'
-                    },
-                    {
-                        data:'is_active',
-                        name:'is_active'
-                    }
+                ],
+                order:[
+                    [2, 'desc']
                 ]
             });
 
@@ -198,6 +196,57 @@
                 table.ajax.reload();
             });
         });
+
+
+        function cancelLetter(incomingMailId, stts){
+            Swal.fire({
+                input: "textarea",
+                inputLabel: "Kenapa Anda Membatalkan Pengajuan ?",
+                inputPlaceholder: "Type your reason here...",
+                inputAttributes: {
+                    "aria-label": "Type your message here"
+                },
+                showCancelButton: true,
+                cancelButtonText: "Kembali",
+                cancelButtonColor: "#d33",
+                confirmButtonColor: "#3085d6",
+                confirmButtonText: "Lanjutkan !"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url:"{{ route('surat/saya/update.status') }}",
+                        type:'POST',
+                        data:{
+                            _token:"{{ csrf_token() }}",
+                            incoming_mail_id:incomingMailId,
+                            status_update:stts,
+                            keterangan:result.value
+                        },
+                        success:function(res){
+                            if (res.status) {
+                                Toast.fire({
+                                    icon:'success',
+                                    text:res.message,
+                                });
+                            }else{
+                                Toast.fire({
+                                    icon:'error',
+                                    text:res.message,
+                                });
+                            }
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 2000);
+                        },error:function(xhr){
+                            Toast.fire({
+                                icon:'error',
+                                text:xhr.responseText().slice(0, 150),
+                            });
+                        }
+                    });
+                }
+            });
+        }
     </script>
     @endpush
 @endsection

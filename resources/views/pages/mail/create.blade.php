@@ -139,19 +139,19 @@
                             }
                             Toast.fire({
                                 icon:"success",
-                                title:res.message
+                                text:res.message
                             });
                         }else{
                             Toast.fire({
                                 icon:"error",
-                                title:res.message
+                                text:res.message
                             });
                         }
                     },
                     error:function(xhr){
                         Toast.fire({
                             icon:"error",
-                            title:xhr.responseText()
+                            text:xhr.responseText().slice(0,150)
                         });
                     }
                 });
