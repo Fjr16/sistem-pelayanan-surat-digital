@@ -54,7 +54,7 @@
             table = $('#tabel-data').DataTable({
                 processing:true,
                 serverSide:true,
-                ajax:"{{ route('proses/surat/upload.show') }}",
+                ajax:"{{ route('proses/surat/pengesahan.show') }}",
                 columns:[
                     {
                         data:'action',
@@ -94,7 +94,7 @@
         });
 
 
-        async function uploadSurat(incomingMailId){
+        async function validation(incomingMailId){
             const { value: file } = await Swal.fire({
                 title: "Upload Surat",
                 input: "file",

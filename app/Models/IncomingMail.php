@@ -29,4 +29,7 @@ class IncomingMail extends Model
     public function incomingMailDetails(){
         return $this->hasMany(IncomingMailDetail::class);
     }
+    public function mail(){
+        return $this->belongsTo(Mail::class);
+    }
 }

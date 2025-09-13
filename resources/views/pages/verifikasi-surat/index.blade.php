@@ -93,7 +93,45 @@
         </div>
     </div>
 
+    {{-- Modal Verifikasi --}}
+    <div class="modal fade" id="modalVerifikasi" tabindex="-1" aria-labelledby="modalVerifikasiLabel" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title fw-bold" id="modalVerifikasiLabel">Verifikasi Surat</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            {{-- Ringkasan Surat --}}
+            <div id="ringkasan-surat" class="mb-3"></div>
+
+            {{-- Persyaratan Dinamis --}}
+            <div class="card mb-3">
+                <div class="card-header fw-bold">Persyaratan</div>
+                <div class="card-body">
+                    <div id="persyaratan-surat"></div>
+                </div>
+            </div>
+
+            {{-- Catatan Verifikasi --}}
+            <div class="card">
+                <div class="card-header fw-bold">Keterangan Penolakan (optional)</div>
+                <div class="card-body">
+                    <textarea id="keterangan-penolakan" class="form-control" rows="3"
+                            placeholder="Tuliskan catatan penolakan pengajuan pembuatan surat penduduk"></textarea>
+                </div>
+            </div>
+
+        </div>
+        <div class="modal-footer"></div>
+        </div>
+    </div>
+    </div>
+
+
     @push('page-js')
+     {{-- cdn form render --}}
+    <script src="https://formbuilder.online/assets/js/form-render.min.js"></script>
     <script>
         var table;
         var status = "";
@@ -156,29 +194,24 @@
         });
 
 
-        function verifikasi(incomingMailId){
+        function verifikasi(incomingMailId, stts){
             Swal.fire({
-                input: "textarea",
-                inputLabel: "Kenapa Anda Membatalkan Pengajuan ?",
-                inputPlaceholder: "Type your reason here...",
-                inputAttributes: {
-                    "aria-label": "Type your message here"
-                },
+                title:"Apakah Anda Yakin ?",
                 showCancelButton: true,
                 cancelButtonText: "Kembali",
                 cancelButtonColor: "#d33",
                 confirmButtonColor: "#3085d6",
-                confirmButtonText: "Lanjutkan !"
+                confirmButtonText: "Ya, Lanjutkan !"
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url:"{{ route('surat/saya/update.status') }}",
+                        url:"{{ route('proses/surat/verifikasi.update') }}",
                         type:'POST',
                         data:{
                             _token:"{{ csrf_token() }}",
                             incoming_mail_id:incomingMailId,
                             status_update:stts,
-                            keterangan:result.value
+                            keterangan:$('#keterangan-penolakan').val()
                         },
                         success:function(res){
                             if (res.status) {
@@ -186,15 +219,14 @@
                                     icon:'success',
                                     text:res.message,
                                 });
+                                $('#modalVerifikasi').modal('hide');
+                                table.ajax.reload();
                             }else{
                                 Toast.fire({
                                     icon:'error',
                                     text:res.message,
                                 });
                             }
-                            setTimeout(() => {
-                                window.location.reload();
-                            }, 2000);
                         },error:function(xhr){
                             Toast.fire({
                                 icon:'error',
@@ -205,6 +237,87 @@
                 }
             });
         }
+
+        function openVerifikasiModal(id) {
+            $.get("{{ url('proses/surat/verifikasi/getDetail') }}/" + id, function(res) {
+            // Isi ringkasan
+                $('#ringkasan-surat').html(`
+                    <strong>${res.mail_name}</strong><br>
+                    Pemohon: ${res.penduduk_name}<br>
+                    Dibantu Petugas: ${res.petugas_name ?? '-'}<br>
+                    Diajukan Pada: ${res.created_at}
+                `);
+
+                let html = "";
+                if (res.requirements) {
+                    res.requirements.forEach(field => {
+                        // Badge status
+                        let statusBadge = "";
+                        if (field.is_required) {
+                            statusBadge = field.is_filled
+                                ? `<span class="badge bg-success ms-2"><i class="bx bx-check me-1"></i> Lengkap</span>`
+                                : `<span class="badge bg-danger ms-2"><i class="bx bx-x me-1"></i> Wajib diisi</span>`;
+                        } else {
+                            statusBadge = field.is_filled
+                                ? `<span class="badge bg-success ms-2"><i class="bx bx-check me-1"></i> Terisi</span>`
+                                : `<span class="badge bg-secondary ms-2"><i class="bx bx-info-circle me-1"></i> Optional</span>`;
+                        }
+    
+                        // Label
+                        html += `<div class="mb-3">
+                                    <label class="fw-bold d-flex justify-content-between border-bottom mb-2 pb-2">
+                                        <div>
+                                            ${field.label}${field.is_required ? ' *' : ''} 
+                                        </div>
+                                        ${statusBadge}
+                                    </label>
+                                `;
+    
+                        // Tipe tampilan
+                        if (field.type === "file") {
+                            if (field.value) {
+                                // File link
+                                html += `<p><a href="/storage/${field.value}" target="_blank" class="btn btn-sm btn-outline-primary">📄 Lihat Dokumen</a></p>`;
+                                // Bisa juga preview langsung PDF
+                                if (field.value.endsWith(".pdf")) {
+                                    html += `<iframe src="/storage/${field.value}" width="100%" height="300px" style="border:none;"></iframe>`;
+                                }
+                            } else {
+                                html += `<p class="text-muted">Tidak ada file</p>`;
+                            }
+                        } else if (Array.isArray(field.value)) {
+                            if (field.value.length > 0) {
+                                html += "<ul>";
+                                field.value.forEach(v => {
+                                    html += `<li>${v}</li>`;
+                                });
+                                html += "</ul>";
+                            } else {
+                                html += `<p class="text-muted">-</p>`;
+                            }
+                        } else {
+                            html += `<p class="text-muted">${field.value ?? "-"}</p>`;
+                        }
+    
+                        html += `</div>`;
+                    });
+                }else{
+                    html ="<p class='text-danger fst-italic'>Tidak Ada Persayaratan Untuk Surat Ini</p>" 
+                }
+                
+                $('#persyaratan-surat').html(html);
+
+                // simpan ID ke modal
+                $('#modalVerifikasi .modal-footer').html(`
+                    <button type="button" class="btn btn-success" onclick="verifikasi(${id},'terima')"><i class="bx bx-check me-1"></i> Verifikasi</button>
+                    <button type="button" class="btn btn-danger" onclick="verifikasi(${id},'tolak')"><i class="bx bx-x me-1"></i> Tolak</button>
+                `);
+
+                // tampilkan modal
+                $('#modalVerifikasi').modal('show');
+            });
+        }
+
     </script>
     @endpush
 @endsection

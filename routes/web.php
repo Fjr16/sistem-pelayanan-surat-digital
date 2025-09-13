@@ -51,14 +51,17 @@ Route::middleware('auth')->group(function () {
         // Proses Surat
         Route::get('proses/surat/verifikasi', [LetterProcessController::class, 'indexVerifikasi'])->name('proses/surat/verifikasi.index');
         Route::get('proses/surat/verifikasi/show', [LetterProcessController::class, 'getSuratVerifikasi'])->name('proses/surat/verifikasi.show');
+        Route::get('proses/surat/verifikasi/getDetail/{id}', [LetterProcessController::class, 'getDetailPengajuan'])->name('proses/surat/verifikasi.getDetail');
         Route::post('proses/surat/verifikasi/store', [LetterProcessController::class, 'store'])->name('proses/surat/verifikasi.store');
+        Route::post('proses/surat/verifikasi/update', [LetterProcessController::class, 'updateStatusPengajuan'])->name('proses/surat/verifikasi.update');
 
         Route::get('proses/surat/upload', [LetterProcessController::class, 'indexUpload'])->name('proses/surat/upload.index');
         Route::get('proses/surat/upload/show', [LetterProcessController::class, 'showUpload'])->name('proses/surat/upload.show');
-        Route::post('proses/surat/upload/store', [LetterProcessController::class, 'store'])->name('proses/surat/upload.store');
-
-        Route::get('proses/surat/pengesahan', [LetterProcessController::class, 'create'])->name('proses/surat/pengesahan.index');
-        Route::post('proses/surat/pengesahan/store', [LetterProcessController::class, 'store'])->name('proses/surat/pengesahan.store');
+        Route::post('proses/surat/upload/store', [LetterProcessController::class, 'storeUpload'])->name('proses/surat/upload.store');
+        
+        Route::get('proses/surat/pengesahan', [LetterProcessController::class, 'indexSent'])->name('proses/surat/pengesahan.index');
+        Route::get('proses/surat/pengesahan/show', [LetterProcessController::class, 'showSent'])->name('proses/surat/pengesahan.show');
+        Route::post('proses/surat/pengesahan/store', [LetterProcessController::class, 'storeSent'])->name('proses/surat/pengesahan.store');
     // });
 
     // Route::middleware('kepsek')->group(function(){
