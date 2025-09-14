@@ -62,6 +62,7 @@ Route::middleware('auth')->group(function () {
         Route::get('proses/surat/pengesahan', [LetterProcessController::class, 'indexSent'])->name('proses/surat/pengesahan.index');
         Route::get('proses/surat/pengesahan/show', [LetterProcessController::class, 'showSent'])->name('proses/surat/pengesahan.show');
         Route::post('proses/surat/pengesahan/store', [LetterProcessController::class, 'storeSent'])->name('proses/surat/pengesahan.store');
+        Route::post('proses/surat/insertQrToPdf', [LetterProcessController::class, 'insertQrToPdf'])->name('proses/surat.insertQrToPdf');
     // });
 
     // Route::middleware('kepsek')->group(function(){

@@ -14,6 +14,7 @@ class IncomingMail extends Model
         'send_at',
         'status',
         'keterangan',
+        'letter_number',
     ];
 
     protected $casts = [
@@ -31,5 +32,8 @@ class IncomingMail extends Model
     }
     public function mail(){
         return $this->belongsTo(Mail::class);
+    }
+    public function signaturePosition() {
+        return $this->hasOne(SignaturePosition::class);
     }
 }

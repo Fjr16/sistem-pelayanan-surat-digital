@@ -46,9 +46,39 @@
         </div>
     </div>
 
+    {{-- Modal upload --}}
+    <div class="modal fade" id="modalVerifikasi" tabindex="-1" aria-labelledby="modalVerifikasiLabel" aria-hidden="true">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold" id="modalVerifikasiLabel">Data Pengajuan</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="ringkasan-surat" class="mb-3"></div>
+
+                <div class="card mb-3">
+                    <div class="card-header fw-bold">Persyaratan</div>
+                    <div class="card-body">
+                        <div id="persyaratan-surat"></div>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+
     @push('page-js')
+    {{-- agar dapat membuat selector area pada pdf --}}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.14.305/pdf.min.js"></script>
+
     <script>
         var table;
+        let selectedArea = null;
+        let currentPdf = null;
+        let currentPage = 1;
+        let scale = 1.5; // zoom PDF
+        let overlay;
 
         $(document).ready(function(){
             table = $('#tabel-data').DataTable({
@@ -119,8 +149,19 @@
             if (file) {
                 const fileURL = URL.createObjectURL(file);
                 Swal.fire({
-                    title: "Preview PDF",
-                    html: `<iframe src="${fileURL}" width="100%" height="600px" style="border:none;"></iframe>`,
+                    title: "Petakan Peletakan TTD",
+                    // html: `<iframe src="${fileURL}" width="100%" height="600px" style="border:none;"></iframe>`,
+                    html: `
+                        <div style="position:relative; width:100%; height:600px; overflow:auto;">
+                            <canvas id="pdf-canvas"></canvas>
+                            <canvas id="overlay-canvas" style="position:absolute; top:0; left:0;"></canvas>
+                            <div class="mt-2 text-center">
+                                <button id="prev-page" class="btn btn-sm btn-outline-primary">Prev</button>
+                                <span id="page-info"></span>
+                                <button id="next-page" class="btn btn-sm btn-outline-primary">Next</button>
+                            </div>
+                        </div>
+                    `,
                     width: 900,
                     heightAuto: false,
                     showCancelButton:true,
@@ -129,12 +170,27 @@
                     confirmButtonText:"Ya, Lanjutkan",
                     cancelButtonColor: "#d33",
                     confirmButtonColor: "#3085d6",
+                    didOpen: () => {
+                        renderPDF(fileURL);
+                    }
                 }).then((result) => {
                     if (result.isConfirmed) {
+                        if (!selectedArea) {
+                            Swal.fire({
+                                title: "Tempat Tanda Tangan ?",
+                                text: "Area peletakkan tanda tangan tidak ditemukan !",
+                                icon: "error"
+                            });
+                            return;
+                        }
                         let formData = new FormData();
                         formData.append('_token', "{{ csrf_token() }}");
                         formData.append('surat_pdf', file);
                         formData.append('incoming_mail_id', incomingMailId);
+                        formData.append('obj_ttd', JSON.stringify(selectedArea));
+                        formData.append('canvas_width', overlay.width);
+                        formData.append('canvas_height', overlay.height);
+
                         $.ajax({
                             url:"{{ route('proses/surat/upload.store') }}",
                             type:"post",
@@ -164,6 +220,167 @@
                     }
                 });
             }
+        }
+
+        // untuk render pdf dan selector area menggunakan pdf.js
+        function renderPDF(url) {
+            const canvas = document.getElementById("pdf-canvas");
+            overlay = document.getElementById("overlay-canvas");
+            const ctx = canvas.getContext("2d");
+
+            pdfjsLib.getDocument(url).promise.then(pdf => {
+                currentPdf = pdf;
+                currentPage = 1;
+                showPage(currentPage);
+
+                document.getElementById("prev-page").addEventListener("click", ()=>{
+                    if(currentPage <= 1) return;
+                    currentPage--;
+                    showPage(currentPage);
+                });
+                document.getElementById("next-page").addEventListener("click", ()=>{
+                    if(currentPage >= pdf.numPages) return;
+                    currentPage++;
+                    showPage(currentPage);
+                });
+            });
+
+            function showPage(pageNum){
+                currentPdf.getPage(pageNum).then(page=>{
+                    const viewport = page.getViewport({ scale });
+                    canvas.width = viewport.width;
+                    canvas.height = viewport.height;
+                    overlay.width = viewport.width;
+                    overlay.height = viewport.height;
+
+                    const renderContext = { canvasContext: ctx, viewport };
+                    page.render(renderContext);
+
+                    document.getElementById("page-info").textContent = `Page ${pageNum} / ${currentPdf.numPages}`;
+
+                    // aktifkan selection
+                    enableSelection(overlay, pageNum);
+                });
+            }
+        }
+
+        function enableSelection(overlay, pageNum) {
+            // hapus listener lama (opsional)
+            overlay.onmousedown = null;
+            overlay.onmousemove = null;
+            overlay.onmouseup = null;
+
+            let isDrawing = false;
+            let startX, startY;
+            let ctx = overlay.getContext("2d");
+
+            overlay.addEventListener("mousedown", (e) => {
+                isDrawing = true;
+                startX = e.offsetX;
+                startY = e.offsetY;
+            });
+
+            overlay.addEventListener("mousemove", (e) => {
+                if (!isDrawing) return;
+                let x = e.offsetX;
+                let y = e.offsetY;
+                let width = x - startX;
+                let height = y - startY;
+
+                ctx.clearRect(0, 0, overlay.width, overlay.height);
+                ctx.strokeStyle = "red";
+                ctx.lineWidth = 2;
+                ctx.strokeRect(startX, startY, width, height);
+            });
+
+            overlay.addEventListener("mouseup", (e) => {
+                isDrawing = false;
+                let endX = e.offsetX;
+                let endY = e.offsetY;
+                selectedArea = {
+                    page:pageNum,
+                    x: Math.min(startX, endX),
+                    y: Math.min(startY, endY),
+                    width: Math.abs(endX - startX),
+                    height: Math.abs(endY - startY)
+                };
+                // console.log("Area terpilih:", selectedArea);
+            });
+        }
+        // end pdf selector and render
+
+        function openModal(id) {
+            $.get("{{ url('proses/surat/verifikasi/getDetail') }}/" + id, function(res) {
+            // Isi ringkasan
+                $('#ringkasan-surat').html(`
+                    <strong>${res.mail_name}</strong><br>
+                    Pemohon: ${res.penduduk_name}<br>
+                    Dibantu Petugas: ${res.petugas_name ?? '-'}<br>
+                    Diajukan Pada: ${res.created_at}
+                `);
+
+                let html = "";
+                if (res.requirements) {
+                    res.requirements.forEach(field => {
+                        // Badge status
+                        let statusBadge = "";
+                        if (field.is_required) {
+                            statusBadge = field.is_filled
+                                ? `<span class="badge bg-success ms-2"><i class="bx bx-check me-1"></i> Lengkap</span>`
+                                : `<span class="badge bg-danger ms-2"><i class="bx bx-x me-1"></i> Wajib diisi</span>`;
+                        } else {
+                            statusBadge = field.is_filled
+                                ? `<span class="badge bg-success ms-2"><i class="bx bx-check me-1"></i> Terisi</span>`
+                                : `<span class="badge bg-secondary ms-2"><i class="bx bx-info-circle me-1"></i> Optional</span>`;
+                        }
+    
+                        // Label
+                        html += `<div class="mb-3">
+                                    <label class="fw-bold d-flex justify-content-between border-bottom mb-2 pb-2">
+                                        <div>
+                                            ${field.label}${field.is_required ? ' *' : ''} 
+                                        </div>
+                                        ${statusBadge}
+                                    </label>
+                                `;
+    
+                        // Tipe tampilan
+                        if (field.type === "file") {
+                            if (field.value) {
+                                // File link
+                                html += `<p><a href="/storage/${field.value}" target="_blank" class="btn btn-sm btn-outline-primary"><i class="bx bxs-file-image"></i> Lihat Gambar</a></p>`;
+                                // Bisa juga preview langsung PDF
+                                if (field.value.endsWith(".pdf")) {
+                                    html += `<iframe src="/storage/${field.value}" width="100%" height="300px" style="border:none;"></iframe>`;
+                                }
+                            } else {
+                                html += `<p class="text-muted">Tidak ada file</p>`;
+                            }
+                        } else if (Array.isArray(field.value)) {
+                            if (field.value.length > 0) {
+                                html += "<ul>";
+                                field.value.forEach(v => {
+                                    html += `<li>${v}</li>`;
+                                });
+                                html += "</ul>";
+                            } else {
+                                html += `<p class="text-muted">-</p>`;
+                            }
+                        } else {
+                            html += `<p class="text-muted">${field.value ?? "-"}</p>`;
+                        }
+    
+                        html += `</div>`;
+                    });
+                }else{
+                    html ="<p class='text-danger fst-italic'>Tidak Ada Persayaratan Untuk Surat Ini</p>" 
+                }
+                
+                $('#persyaratan-surat').html(html);
+
+                // tampilkan modal
+                $('#modalVerifikasi').modal('show');
+            });
         }
     </script>
     @endpush
