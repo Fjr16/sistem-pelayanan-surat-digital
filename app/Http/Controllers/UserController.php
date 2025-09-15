@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Role;
+use App\Enums\UserRole;
 use App\Models\User;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -16,10 +17,10 @@ class UserController extends Controller
 {
 
     public function getData(){
-        $roleId = request()->get('role_id');
-        $data = User::with('role')
-        ->when($roleId, function($q) use ($roleId){
-            return $q->where('role_id', $roleId);
+        $role = request()->get('role_name');
+        $data = User::query()
+        ->when($role, function($q) use ($role){
+            return $q->where('role', $role);
         });
 
         return DataTables::of($data)
@@ -91,7 +92,7 @@ class UserController extends Controller
     public function index()
     {
         $data = User::all();
-        $roles = Role::all();
+        $roles = UserRole::cases();
         return view('pages.user.index', [
             'title' => 'Pengguna',
             'data' => $data,
@@ -110,7 +111,7 @@ class UserController extends Controller
                 'name' => 'required|string',
                 'username' => 'required|unique:users,username',
                 'email' => 'required|unique:users,email',
-                'role' => 'required|in:Kepala Sekolah,Guru,Administrator',
+                'role' => ['required', Rule::enum(UserRole::class)],
                 'password' => 'required',
             ]);
 
@@ -148,7 +149,7 @@ class UserController extends Controller
                 'name' => 'required|string',
                 'username' => 'required|unique:users,username,' . $item->id,
                 'email' => 'required|unique:users,email,' . $item->id,
-                'role' => 'required|in:Kepala Sekolah,Guru,Administrator',
+                'role' => ['required', Rule::enum(UserRole::class)],
             ]);
 
             if ($request->password) {

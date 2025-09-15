@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Enums\UserRole;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,7 +17,7 @@ class isPetugas
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (Auth::user()->role !== 'Petugas Wali Nagari') {
+        if (Auth::user()->role !== UserRole::PETUGAS->value) {
             return redirect('/misc/forbidden');
         }
         return $next($request);

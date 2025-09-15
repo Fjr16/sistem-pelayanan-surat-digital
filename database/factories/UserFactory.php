@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\UserRole;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -23,8 +24,9 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
+        $role = UserRole::cases()[array_rand(UserRole::cases())]->value;
         return [
-            'role_id' => 1,
+            'role' => $role,
             'username' => fake()->userName(),
             'password' => static::$password ??= Hash::make('password'),
             'email' => fake()->unique()->safeEmail(),

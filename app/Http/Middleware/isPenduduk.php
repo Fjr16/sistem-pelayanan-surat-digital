@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Enums\UserRole;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,7 +17,7 @@ class isPenduduk
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (Auth::user()->role !== 'Penduduk') {
+        if (Auth::user()->role !== UserRole::PENDUDUK->value) {
             return redirect('/misc/forbidden');
         }
         return $next($request);

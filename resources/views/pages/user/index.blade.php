@@ -38,13 +38,13 @@
                     @foreach($roles as $role)
                         <li class="nav-item" role="presentation">
                             <button class="nav-link"
-                                id="tab-{{ $role->id }}"
+                                id="tab-{{ $role->value }}"
                                 data-bs-toggle="tab"
                                 data-bs-target="#content-all"
                                 type="button"
                                 role="tab">
                                 <i class="bx bx-user"></i>
-                                {{ $role->name }}
+                                {{ $role->label() }}
                             </button>
                         </li>
                     @endforeach
@@ -124,14 +124,14 @@
                             </div>
                         </div>
                         <div class="row mb-6">
-                            <label class="col-sm-2 col-form-label" for="role_id">Role *</label>
+                            <label class="col-sm-2 col-form-label" for="role">Role *</label>
                             <div class="col-sm-10">
-                                <select name="role_id" class="form-control" id="role_id" required>
+                                <select name="role" class="form-control" id="role" required>
                                     @foreach ($roles as $role)
-                                        @if (old('role_id') === $role->id)
-                                            <option value="{{ $role->id }}" selected>{{ $role->name }}</option>
+                                        @if (old('role') === $role->value)
+                                            <option value="{{ $role->value }}" selected>{{ $role->label() }}</option>
                                         @else
-                                            <option value="{{ $role->id }}">{{ $role->name }}</option>
+                                            <option value="{{ $role->value }}">{{ $role->label() }}</option>
                                         @endif
                                     @endforeach
                                 </select>
@@ -195,14 +195,14 @@
                             </div>
                         </div>
                         <div class="row mb-6">
-                            <label class="col-sm-2 col-form-label" for="role_id">Role *</label>
+                            <label class="col-sm-2 col-form-label" for="role">Role *</label>
                             <div class="col-sm-10">
-                                <select name="role_id" class="form-control" id="role_id" required>
+                                <select name="role" class="form-control" id="role" required>
                                     @foreach ($roles as $role)
-                                        @if (old('role_id') === $role->id)
-                                            <option value="{{ $role->id }}" selected>{{ $role->name }}</option>
+                                        @if (old('role') === $role->value)
+                                            <option value="{{ $role->value }}" selected>{{ $role->label() }}</option>
                                         @else
-                                            <option value="{{ $role->id }}">{{ $role->name }}</option>
+                                            <option value="{{ $role->value }}">{{ $role->label() }}</option>
                                         @endif
                                     @endforeach
                                 </select>
@@ -222,7 +222,7 @@
     @push('page-js')
     <script>
         var table;
-        var selectedRoleId = "";
+        var selectedRole = "";
 
         $(document).ready(function(){
             table = $('#tabel-data').DataTable({
@@ -231,7 +231,7 @@
                 ajax:{
                     url:"{{ route('user.getData') }}",
                     data: function(d){
-                        d.role_id = selectedRoleId;
+                        d.role_name = selectedRole;
                     }
                 },
                 columns:[
@@ -274,8 +274,8 @@
                         name:'status_kawin'
                     },
                     {
-                        data:'role.name',
-                        name:'role.name'
+                        data:'role',
+                        name:'role'
                     },
                     {
                         data:'is_active',
@@ -287,9 +287,9 @@
             $('#roleTabs button').on('click', function(){
                 var tabId = $(this).attr('id');
                 if (tabId === 'tab-all') {
-                    selectedRoleId = "";
+                    selectedRole = "";
                 }else{
-                    selectedRoleId = tabId.replace('tab-', '');
+                    selectedRole = tabId.replace('tab-', '');
                 }
                 table.ajax.reload();
             });
@@ -343,7 +343,7 @@
                             form.querySelector('#name').value = item.name;
                             form.querySelector('#username').value = item.username;
                             form.querySelector('#email').value = item.email;
-                            form.querySelector('#role_id').value = item.role_id;
+                            form.querySelector('#role').value = item.role;
 
                             var modalEdit = new bootstrap.Modal(editModal);
                             modalEdit.show();

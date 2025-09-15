@@ -1,8 +1,8 @@
 <?php
 
-use App\Http\Middleware\isAdmin;
 use App\Http\Middleware\isPenduduk;
 use App\Http\Middleware\isPetugas;
+use App\Http\Middleware\isSekretaris;
 use App\Http\Middleware\isWaliNagari;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -19,7 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->redirectGuestsTo('/login');    //untuk mengarahkan pengguna yang tidak terautentikasi
         $middleware->redirectUsersTo('/dashboard');    //untuk mengarahkan pengguna yang terautentikasi
         $middleware->alias([
-            'admin' => isAdmin::class,
+            'admin' => isSekretaris::class,
             'petugas' => isPetugas::class,
             'wali-nagari' => isWaliNagari::class,
             'warga' => isPenduduk::class,

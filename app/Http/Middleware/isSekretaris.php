@@ -2,12 +2,13 @@
 
 namespace App\Http\Middleware;
 
+use App\Enums\UserRole;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
-class isAdmin
+class isSekretaris
 {
     /**
      * Handle an incoming request.
@@ -16,7 +17,7 @@ class isAdmin
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (Auth::user()->role !== 'Administrator') {
+        if (Auth::user()->role !== UserRole::SEKRETARIS->value) {
             return redirect('/misc/forbidden');
         }
         return $next($request);

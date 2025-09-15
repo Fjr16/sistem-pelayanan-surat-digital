@@ -43,7 +43,7 @@
                     </div>
                     <div class="flex-grow-1">
                     <h6 class="mb-0">{{ Auth::user()->name ?? '-' }}</h6>
-                    <small class="text-body-secondary">{{ Auth::user()->role->name ?? '-' }}</small>
+                    <small class="text-body-secondary">{{ Auth::user()->role ?? '-' }}</small>
                     </div>
                 </div>
                 </a>

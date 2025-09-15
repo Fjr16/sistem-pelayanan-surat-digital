@@ -19,7 +19,7 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
-        'role_id',
+        'role',
         'username',
         'password',
         'email',
@@ -64,9 +64,6 @@ class User extends Authenticatable
         ];
     }
 
-    public function role() {
-        return $this->belongsTo(Role::class);
-    }
     public function IncomingMailsAsPenduduks() {
         return $this->hasMany(IncomingMail::class, 'penduduk_id', 'id');
     }

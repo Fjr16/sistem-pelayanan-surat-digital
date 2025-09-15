@@ -44,10 +44,10 @@
                 <div class="col-md-6 form-password-toogle">
                     <label class="form-label" for="password">Password *</label>
                       <div class="input-group input-group-merge">
-                          <input 
-                          type="password" 
-                          class="form-control" 
-                          id="password" 
+                          <input
+                          type="password"
+                          class="form-control"
+                          id="password"
                           name="password"
                           placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
                           aria-describedby="password"
@@ -64,7 +64,7 @@
           </div>
           <!-- /Account -->
         </div>
-
+{{--
         @if (Auth::user()->role === 'Guru' && Auth::user()->teacher)
           <div class="card">
             <h5 class="card-header">Data Guru</h5>
@@ -141,7 +141,7 @@
               </form>
             </div>
           </div>
-        @endif
+        @endif --}}
       </div>
     </div>
   </div>

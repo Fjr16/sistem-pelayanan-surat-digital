@@ -13,23 +13,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('roles')->truncate();
         DB::table('users')->truncate();
-        
-        DB::table('roles')->insert([
-            [
-                'name' => 'Sekretaris', 
-            ],
-            [
-                'name' => 'Petugas', 
-            ],
-            [
-                'name' => 'Wali Nagari', 
-            ],
-            [
-                'name' => 'Penduduk', 
-            ],
-        ]);
         User::factory(1)->create();
     }
 }
