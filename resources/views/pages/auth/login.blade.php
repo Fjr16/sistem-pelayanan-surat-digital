@@ -45,6 +45,14 @@
                 <button class="btn btn-primary d-grid w-100" type="submit">Login</button>
               </div>
             </form>
+
+            <hr>
+            <p class="text-center mt-4 mb-0">
+                <span>Belum punya akun?</span>
+                <a href="{{ route('register') }}" class="fw-bold">
+                Daftar di sini
+                </a>
+            </p>
           </div>
         </div>
       </div>

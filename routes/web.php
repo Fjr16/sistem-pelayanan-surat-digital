@@ -20,13 +20,13 @@ Route::middleware('auth')->group(function () {
         // Pengguna
         Route::get('/master/aktor/pengguna', [UserController::class, 'index'])->name('master/aktor/pengguna.index');
         Route::post('/master/aktor/pengguna/store', [UserController::class, 'store'])->name('master/aktor/pengguna.store');
-        Route::put('/master/aktor/pengguna/update/{id}', [UserController::class, 'update'])->name('master/aktor/pengguna.update')->withoutMiddleware('admin');
+        Route::put('/master/aktor/pengguna/update/{id}', [UserController::class, 'update'])->name('master/aktor/pengguna.update');
         Route::delete('/master/aktor/pengguna/destroy/{id}', [UserController::class, 'destroy'])->name('master/aktor/pengguna.destroy');
 
-        Route::delete('/pengguna/restore/forceDelete/{id}', [UserController::class, 'forceDelete'])->name('pengguna/restore.forceDelete');
-        Route::put('/pengguna/restore/{id}', [UserController::class, 'restore'])->name('pengguna.restore');
+        // Route::delete('/pengguna/restore/forceDelete/{id}', [UserController::class, 'forceDelete'])->name('pengguna/restore.forceDelete');
+        // Route::put('/pengguna/restore/{id}', [UserController::class, 'restore'])->name('pengguna.restore');
 
-        Route::get('/profile', [UserController::class, 'profile'])->name('profile')->withoutMiddleware('admin');
+        Route::get('/profile', [UserController::class, 'profile'])->name('profile');
     // });
     // Route::middleware('admin')->prefix('master/')->group(function () {
         // Route::get('penduduk', [MasterController::class, 'indexPenduduk'])->name('penduduk.index');
@@ -58,7 +58,7 @@ Route::middleware('auth')->group(function () {
         Route::get('proses/surat/upload', [LetterProcessController::class, 'indexUpload'])->name('proses/surat/upload.index');
         Route::get('proses/surat/upload/show', [LetterProcessController::class, 'showUpload'])->name('proses/surat/upload.show');
         Route::post('proses/surat/upload/store', [LetterProcessController::class, 'storeUpload'])->name('proses/surat/upload.store');
-        
+
         Route::get('proses/surat/pengesahan', [LetterProcessController::class, 'indexSent'])->name('proses/surat/pengesahan.index');
         Route::get('proses/surat/pengesahan/show', [LetterProcessController::class, 'showSent'])->name('proses/surat/pengesahan.show');
         Route::post('proses/surat/pengesahan/store', [LetterProcessController::class, 'storeSent'])->name('proses/surat/pengesahan.store');
@@ -81,6 +81,8 @@ Route::middleware('auth')->group(function () {
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthenticateController::class, 'index'])->name('login');
     Route::post('/login', [AuthenticateController::class, 'store'])->name('login');
+    Route::get('/registration', [AuthenticateController::class, 'indexRegister'])->name('register');
+    Route::post('/registration', [AuthenticateController::class, 'storeRegister'])->name('register');
 });
 Route::get('/misc/error', function () {
     return view('pages.misc-page.error');

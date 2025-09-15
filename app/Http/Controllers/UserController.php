@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Agama;
+use App\Enums\MaritalStatus;
 use App\Enums\UserRole;
 use App\Models\User;
-use Exception;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
-use Illuminate\Validation\ValidationException;
+use Throwable;
 use Yajra\DataTables\Facades\DataTables;
 
 class UserController extends Controller
@@ -42,8 +42,8 @@ class UserController extends Controller
             })
             // mengubah format tanggal
             ->editColumn('is_active', function($item){
-                $bg = $item->i_active ? 'success' : 'danger';
-                $icon = $item->i_active ? 'check' : 'x';
+                $bg = $item->is_active ? 'success' : 'danger';
+                $icon = $item->is_active ? 'check' : 'x';
                 return '<span class="p-0 badge bg-'. $bg . '"><i class="p-0 bx bx-'. $icon .'" style="font-size:30px;"></i></span>';
             })
             // agar kolom aksi tidak disaring/sorting
@@ -69,34 +69,49 @@ class UserController extends Controller
         } catch (\Throwable $e) {
             return response()->json([
                 'status' => false,
-                'message' => 'Failed: Terjadi kesalahan Sistem, error: ' . $e->getMessage(),
+                'message' => substr($e->getMessage(),0,150),
             ]);
         }
 
     }
 
+    // profile
     public function profile() {
         $arrJk = [
             'Pria',
             'Wanita',
         ];
+        $agama = Agama::cases();
+        $maritalStts = MaritalStatus::cases();
 
         return view('pages.user.profile.index', [
             'arrJk' => $arrJk,
+            'agama' => $agama,
+            'maritalStts' => $maritalStts,
         ]);
     }
+    // endProfile
 
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
+        $arrJk = [
+            'Pria',
+            'Wanita',
+        ];
+        $agama = Agama::cases();
+        $maritalStts = MaritalStatus::cases();
         $data = User::all();
         $roles = UserRole::cases();
         return view('pages.user.index', [
             'title' => 'Pengguna',
             'data' => $data,
             'roles' => $roles,
+            'arrJk' => $arrJk,
+            'agama' => $agama,
+            'maritalStts' => $maritalStts,
         ]);
     }
 
@@ -106,6 +121,9 @@ class UserController extends Controller
     public function store(Request $request)
     {
         try {
+            if (!$request['role']) {
+                $request['role'] = UserRole::PENDUDUK->value;
+            }
             DB::beginTransaction();
             $data = $request->validate([
                 'name' => 'required|string',
@@ -113,6 +131,20 @@ class UserController extends Controller
                 'email' => 'required|unique:users,email',
                 'role' => ['required', Rule::enum(UserRole::class)],
                 'password' => 'required',
+                'nik' => 'required|unique:users,nik',
+                'no_kk' => 'required',
+                'no_wa' => 'required|unique:users,no_wa',
+                'name' => 'required|string',
+                'gender' => 'required|in:Pria,Wanita',
+                'tempat_lhr' => 'required|string',
+                'tanggal_lhr' => 'required|date|before:today',
+                'agama' => ['required', Rule::enum(Agama::class)],
+                'status_kawin' => ['required', Rule::enum(MaritalStatus::class)],
+                'pekerjaan' => 'nullable|string',
+                'jabatan' => 'nullable|string',
+                'tanggal_masuk' => 'nullable|date',
+                'alamat_ktp' => 'nullable|string',
+                'alamat_dom' => 'nullable|string',
             ]);
 
             $data['password'] = Hash::make($request->password);
@@ -121,13 +153,7 @@ class UserController extends Controller
 
             DB::commit();
             return back()->with('success', 'Berhasil Disimpan');
-        } catch (Exception $e) {
-            DB::rollBack();
-            return back()->with('error', 'Terjadi kesalahan: '. $e->getMessage());
-        } catch (ModelNotFoundException $e) {
-            DB::rollBack();
-            return back()->with('error', 'Terjadi kesalahan: '. $e->getMessage());
-        } catch (ValidationException $e) {
+        } catch (Throwable $e) {
             DB::rollBack();
             return back()->with('error', 'Terjadi kesalahan: '. $e->getMessage());
         }
@@ -150,6 +176,20 @@ class UserController extends Controller
                 'username' => 'required|unique:users,username,' . $item->id,
                 'email' => 'required|unique:users,email,' . $item->id,
                 'role' => ['required', Rule::enum(UserRole::class)],
+                'nik' => 'required|unique:users,nik,' . $item->id,
+                'no_kk' => 'required',
+                'no_wa' => 'required|unique:users,no_wa,' . $item->id,
+                'name' => 'required|string',
+                'gender' => 'required|in:Pria,Wanita',
+                'tempat_lhr' => 'required|string',
+                'tanggal_lhr' => 'required|date|before:today',
+                'agama' => ['required', Rule::enum(Agama::class)],
+                'status_kawin' => ['required', Rule::enum(MaritalStatus::class)],
+                'pekerjaan' => 'nullable|string',
+                'jabatan' => 'nullable|string',
+                'tanggal_masuk' => 'nullable|date',
+                'alamat_ktp' => 'nullable|string',
+                'alamat_dom' => 'nullable|string',
             ]);
 
             if ($request->password) {
@@ -160,13 +200,7 @@ class UserController extends Controller
 
             DB::commit();
             return back()->with('success', 'Berhasil Diperbarui');
-        } catch (Exception $e) {
-            DB::rollBack();
-            return back()->with('error', 'Terjadi kesalahan: '. $e->getMessage());
-        } catch (ModelNotFoundException $e) {
-            DB::rollBack();
-            return back()->with('error', 'Terjadi kesalahan: '. $e->getMessage());
-        } catch (ValidationException $e) {
+        } catch (Throwable $e) {
             DB::rollBack();
             return back()->with('error', 'Terjadi kesalahan: '. $e->getMessage());
         }
@@ -184,56 +218,37 @@ class UserController extends Controller
 
             DB::commit();
             return back()->with('success', 'Berhasil Dihapus');
-        } catch (Exception $e) {
-            DB::rollBack();
-            return back()->with('error', 'Terjadi kesalahan: '. $e->getMessage());
-        } catch (ModelNotFoundException $e) {
-            DB::rollBack();
-            return back()->with('error', 'Terjadi kesalahan: '. $e->getMessage());
-        } catch (ValidationException $e) {
+        } catch (Throwable $e) {
             DB::rollBack();
             return back()->with('error', 'Terjadi kesalahan: '. $e->getMessage());
         }
     }
 
-    public function restore(Request $request, $id) {
-        try {
-            DB::beginTransaction();
-            $item = User::withTrashed()->findOrFail(decrypt($id));
-            $item->restore();
+    // public function restore(Request $request, $id) {
+    //     try {
+    //         DB::beginTransaction();
+    //         $item = User::withTrashed()->findOrFail(decrypt($id));
+    //         $item->restore();
 
-            DB::commit();
-            return back()->with('success', 'Berhasil Dipulihkan');
-        } catch (Exception $e) {
-            DB::rollBack();
-            return back()->with('error', 'Terjadi kesalahan: '. $e->getMessage());
-        } catch (ModelNotFoundException $e) {
-            DB::rollBack();
-            return back()->with('error', 'Terjadi kesalahan: '. $e->getMessage());
-        } catch (ValidationException $e) {
-            DB::rollBack();
-            return back()->with('error', 'Terjadi kesalahan: '. $e->getMessage());
-        }
-    }
+    //         DB::commit();
+    //         return back()->with('success', 'Berhasil Dipulihkan');
+    //     } catch (Throwable $e) {
+    //         DB::rollBack();
+    //         return back()->with('error', 'Terjadi kesalahan: '. $e->getMessage());
+    //     }
+    // }
 
-    public function forceDelete($id) {
-        try {
-            DB::beginTransaction();
-            $item = User::withTrashed()->findOrFail(decrypt($id));
-            $item->teacher()->forceDelete();
-            $item->forceDelete();
+    // public function forceDelete($id) {
+    //     try {
+    //         DB::beginTransaction();
+    //         $item = User::withTrashed()->findOrFail(decrypt($id));
+    //         $item->forceDelete();
 
-            DB::commit();
-            return back()->with('success', 'Berhasil Dihapus Permanen');
-        } catch (Exception $e) {
-            DB::rollBack();
-            return back()->with('error', 'Terjadi kesalahan: '. $e->getMessage());
-        } catch (ModelNotFoundException $e) {
-            DB::rollBack();
-            return back()->with('error', 'Terjadi kesalahan: '. $e->getMessage());
-        } catch (ValidationException $e) {
-            DB::rollBack();
-            return back()->with('error', 'Terjadi kesalahan: '. $e->getMessage());
-        }
-    }
+    //         DB::commit();
+    //         return back()->with('success', 'Berhasil Dihapus Permanen');
+    //     } catch (Throwable $e) {
+    //         DB::rollBack();
+    //         return back()->with('error', 'Terjadi kesalahan: '. $e->getMessage());
+    //     }
+    // }
 }

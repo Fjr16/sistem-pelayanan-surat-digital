@@ -36,6 +36,30 @@
     .swal2-container{
         z-index: 20000 !important;
     }
+    .btn-success {
+    background-color: #28c76f !important;
+    border-color: #28c76f !important;
+    color: #fff !important;
+    }
+
+    .btn-success:hover {
+    background-color: #22bb66 !important;
+    border-color: #22bb66 !important;
+    }
+
+    .btn-success:focus,
+    .btn-success:active {
+    background-color: #1ea65c !important;
+    border-color: #1ea65c !important;
+    box-shadow: 0 0 0 0.25rem rgba(40, 199, 111, 0.5) !important;
+    }
+
+    .btn-success:disabled {
+    background-color: #9ae6b4 !important;
+    border-color: #9ae6b4 !important;
+    color: #fff !important;
+    opacity: 0.7 !important;
+    }
 </style>
 @stack('page-css')
 
