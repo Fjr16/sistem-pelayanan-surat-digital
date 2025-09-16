@@ -345,7 +345,7 @@ class LetterProcessController extends Controller
 
             $dataToBarcode = generateDigitalBarcode($incomingMail);
             $qrPath = tempnam(sys_get_temp_dir(), 'qr_') . '.png';
-            QrCode::format('png')->size(200)->generate(json_encode($dataToBarcode), $qrPath);
+            QrCode::format('png')->size(200)->generate($dataToBarcode, $qrPath);
             
             $pdf = new Fpdi();
             $pageCount = $pdf->setSourceFile(storage_path('app/public/' . $incomingMail->file_path));
