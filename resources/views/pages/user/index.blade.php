@@ -269,8 +269,7 @@
                                     class="form-control"
                                     name="alamat_ktp"
                                     id="alamat_ktp"
-                                    rows="2" placeholder="Alamat sesuai KTP">
-                                </textarea>
+                                    rows="2" placeholder="Alamat sesuai KTP"></textarea>
                             </div>
                         </div>
                         <div class="row mb-6">
@@ -280,14 +279,13 @@
                                     class="form-control"
                                     name="alamat_dom"
                                     id="alamat_dom"
-                                    rows="2" placeholder="Alamat sesuai Domisili">
-                                </textarea>
+                                    rows="2" placeholder="Alamat sesuai Domisili"></textarea>
                             </div>
                         </div>
                         <div class="row mb-6">
                             <div class="col-sm-10 ms-auto">
                                 <div class="form-check form-switch mb-2">
-                                    <input class="form-check-input" type="checkbox" id="is_active"/>
+                                    <input class="form-check-input" type="checkbox" id="is_active" name="is_active"/>
                                     <label class="form-check-label" for="is_active">Aktifkan akun</label>
                                 </div>
                             </div>
@@ -493,8 +491,7 @@
                                     class="form-control"
                                     name="alamat_ktp"
                                     id="alamat_ktp"
-                                    rows="2" placeholder="Alamat sesuai KTP">
-                                </textarea>
+                                    rows="2" placeholder="Alamat sesuai KTP"></textarea>
                             </div>
                         </div>
                         <div class="row mb-6">
@@ -504,14 +501,13 @@
                                     class="form-control"
                                     name="alamat_dom"
                                     id="alamat_dom"
-                                    rows="2" placeholder="Alamat sesuai Domisili">
-                                </textarea>
+                                    rows="2" placeholder="Alamat sesuai Domisili"></textarea>
                             </div>
                         </div>
                         <div class="row mb-6">
                             <div class="col-sm-10 ms-auto">
                                 <div class="form-check form-switch mb-2">
-                                    <input class="form-check-input" type="checkbox" id="is_active"/>
+                                    <input class="form-check-input" type="checkbox" name="is_active" id="is_active"/>
                                     <label class="form-check-label" for="is_active">Aktifkan akun</label>
                                 </div>
                             </div>

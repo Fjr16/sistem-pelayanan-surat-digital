@@ -147,6 +147,7 @@ class UserController extends Controller
                 'alamat_dom' => 'nullable|string',
             ]);
 
+            if(!$request->is_active) $data['is_active'] = false;
             $data['password'] = Hash::make($request->password);
 
             User::create($data);
@@ -194,6 +195,11 @@ class UserController extends Controller
 
             if ($request->password) {
                 $data['password'] = Hash::make($request->password);
+            }
+            if ($request->is_active) {
+                $data['is_active'] = true;
+            }else{
+                $data['is_active'] = false;
             }
 
             $item->update($data);

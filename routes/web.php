@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthenticateController;
 use App\Http\Controllers\LetterProcessController;
 use App\Http\Controllers\MasterController;
+use App\Http\Controllers\QrVerifyController;
 use App\Http\Controllers\RekapitulasiController;
 use App\Http\Controllers\SubmissionLetterController;
 use App\Http\Controllers\UserController;
@@ -83,6 +84,8 @@ Route::middleware('guest')->group(function () {
     Route::post('/login', [AuthenticateController::class, 'store'])->name('login');
     Route::get('/registration', [AuthenticateController::class, 'indexRegister'])->name('register');
     Route::post('/registration', [AuthenticateController::class, 'storeRegister'])->name('register');
+
+    Route::get('letter/verify/code', [QrVerifyController::class, 'verify'])->name('Qr.verify');
 });
 Route::get('/misc/error', function () {
     return view('pages.misc-page.error');

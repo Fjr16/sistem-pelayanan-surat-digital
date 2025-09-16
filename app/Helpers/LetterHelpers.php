@@ -23,21 +23,25 @@ if (!function_exists('generateNomorSurat')) {
 if (!function_exists('generateDigitalBarcode')) {
     function generateDigitalBarcode(IncomingMail $item)
     {
-        $jenisSurat = $item->mail->name;
+        // $id = $item->id;
+        // $jenisSurat = $item->mail->name;
         $noSurat = $item->letter_number;
-        $dibuatPada = $item->created_at->format('Y-m-d');
-        $disahkanPada = $item->send_at ? Carbon\Carbon::parse($item->send_at)->format('Y-m-d') : date('Y-m-d');
-        $nama_pemohon = $item->penduduk->name;
-        $nik_pemohon = $item->penduduk->nik;
+        // $dibuatPada = $item->created_at->format('Y-m-d');
+        // $disahkanPada = $item->send_at ? Carbon\Carbon::parse($item->send_at)->format('Y-m-d') : date('Y-m-d');
+        // $nama_pemohon = $item->penduduk->name;
+        // $nik_pemohon = $item->penduduk->nik;
 
-        return $dataBarcode = encrypt(json_encode([
-            'jenis'   => $jenisSurat,
-            'nomor'   => $noSurat,
-            'buat'    => $dibuatPada,
-            'sahkan'  => $disahkanPada,
-            'nama'    => $nama_pemohon,
-            'nik'     => $nik_pemohon,
-        ]));
+        // return $dataBarcode = encrypt(json_encode([
+        //     'jenis'   => $jenisSurat,
+        //     'nomor'   => $noSurat,
+        //     'buat'    => $dibuatPada,
+        //     'sahkan'  => $disahkanPada,
+        //     'nama'    => $nama_pemohon,
+        //     'nik'     => $nik_pemohon,
+        // ]));
+        $secret_key = env('QR_SECRET_KEY');
+        $signature = hash_hmac('sha256',$noSurat,$secret_key);
+        return url("letter/verify/code?number={$noSurat}&sig={$signature}");
     }
 }
 
@@ -49,12 +53,12 @@ if (!function_exists('sendNotifyToWa')) {
             $noSurat = $item->letter_number;
             $nama_pemohon = $item->penduduk->name;
             $no_wa = $item->penduduk->no_wa;
-    
+
             $message = "Halo ".$nama_pemohon.
-                ", surat Anda : " . $jenisSurat . 
+                ", surat Anda : " . $jenisSurat .
                 ", dengan nomor : ". $noSurat .
                 " sudah selesai. Silakan cek di link: ".route('proses/surat.unduh', $$item->id);
-            
+
             return true;
         } catch (\Throwable $th) {
             return false;
