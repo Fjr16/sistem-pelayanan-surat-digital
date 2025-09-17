@@ -72,7 +72,16 @@
           <div class="text-truncate" data-i18n="Dashboards">Dashboard</div>
         </a>
       </li>
+      @canany(['sekretaris', 'wali-nagari'])
+      <li class="menu-item {{ Route::is('export*') ? 'active' : '' }}">
+        <a href="{{ route('export.index') }}" class="menu-link">
+          <i class="menu-icon tf-icons bx bx-bar-chart"></i>
+          <div class="text-truncate" data-i18n="Laporan">Laporan</div>
+        </a>
+      </li>
+      @endcanany
 
+      @canany(['petugas', 'warga'])
       {{-- Pengajuan Surat --}}
       <li class="menu-item {{ Route::is('pengajuan/surat.*') ? 'active' : '' }}">
         <a href="{{ route('pengajuan/surat.create') }}" class="menu-link">
@@ -80,6 +89,9 @@
           <div class="text-truncate" data-i18n="Surat">Ajukan Surat</div>
         </a>
       </li>
+      @endcanany
+
+      @can('warga')
       {{-- Surat Saya --}}
       <li class="menu-item {{ Route::is('surat/saya.*') ? 'active' : '' }}">
         <a href="{{ route('surat/saya.index') }}" class="menu-link">
@@ -87,6 +99,9 @@
           <div class="text-truncate" data-i18n="Surat">Surat Saya</div>
         </a>
       </li>
+      @endcan
+
+    @canany(['petugas', 'wali-nagari'])
     {{-- Proses Surat --}}
     <li class="menu-item {{ Route::is('proses/surat*') ? 'active open' : '' }}">
         <a href="javascript:void(0);" class="menu-link menu-toggle">
@@ -95,6 +110,7 @@
         </a>
 
         <ul class="menu-sub">
+            @can('petugas')
             {{-- Verifikasi Surat --}}
             <li class="menu-item {{ Route::is('proses/surat/verifikasi.*') ? 'active' : '' }}">
                 <a href="{{ route('proses/surat/verifikasi.index') }}" class="menu-link">
@@ -107,27 +123,31 @@
                     <div data-i18n="Upload Surat">Upload Surat</div>
                 </a>
             </li>
+            @endcan
+            @can('wali-nagari')
             {{-- Pengesahan Surat --}}
             <li class="menu-item {{ Route::is('proses/surat/pengesahan.*') ? 'active' : '' }}">
                 <a href="{{ route('proses/surat/pengesahan.index') }}" class="menu-link">
                     <div data-i18n="Kirim Surat">Kirim Surat</div>
                 </a>
             </li>
+            @endcan
         </ul>
     </li>
+    @endcanany
 
-
-      {{-- master data --}}
+    @can('sekretaris')
+    {{-- master data --}}
       <li class="menu-header small text-uppercase">
         <span class="menu-header-text">Master Data</span>
       </li>
-      <!-- Person -->
-    <li class="menu-item {{ Route::is('master/aktor/pengguna.*') ? 'active' : '' }}">
-        <a href="{{ route('master/aktor/pengguna.index') }}" class="menu-link">
-            <i class="menu-icon tf-icons bx bx-group"></i>
-            <div class="text-truncate" data-i18n="Akun Pengguna">Manajemen User</div>
-        </a>
-    </li>
+        <!-- Person -->
+      <li class="menu-item {{ Route::is('master/aktor/pengguna.*') ? 'active' : '' }}">
+          <a href="{{ route('master/aktor/pengguna.index') }}" class="menu-link">
+              <i class="menu-icon tf-icons bx bx-group"></i>
+              <div class="text-truncate" data-i18n="Akun Pengguna">Manajemen User</div>
+          </a>
+      </li>
       {{-- Jenis Surat --}}
       <li class="menu-item {{ Route::is('jenis/surat.*') ? 'active' : '' }}">
         <a href="{{ route('jenis/surat.index') }}"
@@ -136,6 +156,7 @@
           <div class="text-truncate" data-i18n="Jenis Surat">Manajemen Surat</div>
         </a>
       </li>
+    @endcan
 
     </ul>
 </aside>

@@ -169,7 +169,7 @@ class UserController extends Controller
         try {
             DB::beginTransaction();
             $item = User::findOrFail($id);
-            if (!$request['role']) {
+            if (!isset($request['role'])) {
                 $request['role'] = $item->role;
             }
             $data = $request->validate([

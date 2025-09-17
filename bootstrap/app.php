@@ -4,6 +4,8 @@ use App\Http\Middleware\isPenduduk;
 use App\Http\Middleware\isPetugas;
 use App\Http\Middleware\isSekretaris;
 use App\Http\Middleware\isWaliNagari;
+use App\Http\Middleware\PendudukOrPetugas;
+use App\Http\Middleware\SekreOrWaliNagari;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -19,12 +21,12 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->redirectGuestsTo('/login');    //untuk mengarahkan pengguna yang tidak terautentikasi
         $middleware->redirectUsersTo('/dashboard');    //untuk mengarahkan pengguna yang terautentikasi
         $middleware->alias([
-            'admin' => isSekretaris::class,
+            'sekretaris' => isSekretaris::class,
             'petugas' => isPetugas::class,
             'wali-nagari' => isWaliNagari::class,
             'warga' => isPenduduk::class,
+            'petugasOrWarga' => PendudukOrPetugas::class,
         ]);
-
     })
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->render(function(NotFoundHttpException $e, $request){
