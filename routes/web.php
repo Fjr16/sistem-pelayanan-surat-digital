@@ -5,6 +5,7 @@ use App\Http\Controllers\LetterProcessController;
 use App\Http\Controllers\MasterController;
 use App\Http\Controllers\QrVerifyController;
 use App\Http\Controllers\RekapitulasiController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SubmissionLetterController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -90,6 +91,10 @@ Route::middleware('guest')->group(function () {
 Route::get('/misc/error', function () {
     return view('pages.misc-page.error');
 });
+
+Route::get('export/report', [ReportController::class, 'index'])->name('export.index');
+Route::get('export/report/show', [ReportController::class, 'show'])->name('export.show');
+Route::get('export/report/download', [ReportController::class, 'exportExcel'])->name('export.download');
 
 
 

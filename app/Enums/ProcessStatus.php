@@ -9,5 +9,17 @@ enum ProcessStatus:string {
     case process = "ON PROCESS";
     case finish = "FINISH";
     case sent = "SENT";
-    case downloaded = "DOWNLOADED";
+    // case downloaded = "DOWNLOADED";
+
+    public function label():string {
+        return match($this){
+            self::pending => 'Verifikasi',
+            self::rejected => 'Ditolak',
+            self::cancel => 'Dibatalkan',
+            self::process => 'Sedang Dibuat',
+            self::finish => 'Menunggu Pengesahan',
+            self::sent => 'Selesai',
+            // self::downloaded => 'Diunduh'
+        };
+    }
 }
