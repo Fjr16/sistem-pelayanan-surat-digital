@@ -210,12 +210,14 @@ class SubmissionLetterController extends Controller
 
         return DataTables::of($data)
         ->addColumn('action', function($row){
+            $urlDownload = route('unduh.surat', encrypt($row->id));
             $cancelBtn = '<button type="button" class="btn btn-sm btn-danger" onclick="cancelLetter('. $row->id .', \''. ProcessStatus::cancel->value .'\')">Batalkan</button>';
             $badgeReject = '<span class="badge bg-danger">DITOLAK</span>';
             $badgeProcess = '<span class="badge bg-info">SEDANG DIBUAT</span>';
             $badgeCancel = '<span class="badge bg-danger">DIBATALKAN</span>';
             $badgeFinish = '<span class="badge bg-primary">MENUNGGU PENGESAHAN</span>';
-            $unduhBtn = '<button class="btn btn-sm btn-dark" onclick="unduhLetter('.$row->id.')">Unduh</button>';
+            // $unduhBtn = '<button class="btn btn-sm btn-dark" onclick="unduhLetter('.$row->id.')">Unduh</button>';
+            $unduhBtn = '<a href="'. $urlDownload .'" class="btn btn-sm btn-dark">Unduh</a>';
             if ($row->status == ProcessStatus::pending->value) {
                 return $cancelBtn;
             }elseif($row->status == ProcessStatus::process->value){

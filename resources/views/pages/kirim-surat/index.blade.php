@@ -224,6 +224,9 @@
                         text: resJson.message
                     });
                 }
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
 
             } catch(err){
                 console.error(err);

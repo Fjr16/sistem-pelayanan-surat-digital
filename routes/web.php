@@ -89,8 +89,12 @@ Route::middleware('guest')->group(function () {
     Route::get('/registration', [AuthenticateController::class, 'indexRegister'])->name('register');
     Route::post('/registration', [AuthenticateController::class, 'storeRegister'])->name('register');
 
+    // verifikasi qr code
     Route::get('letter/verify/code', [QrVerifyController::class, 'verify'])->name('Qr.verify');
+
+    // unduh Surat
 });
+Route::get('unduh/surat/{encryptIdSurat}', [LetterProcessController::class, 'download'])->name('unduh.surat');
 Route::get('/misc/error', function () {
     return view('pages.misc-page.error');
 });

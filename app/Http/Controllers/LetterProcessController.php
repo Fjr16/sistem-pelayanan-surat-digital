@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\ProcessStatus;
+use App\Helpers\HelperApiWaFonte;
 use App\Models\IncomingMail;
 use App\Models\SignaturePosition;
 use DateTime;
@@ -254,7 +255,7 @@ class LetterProcessController extends Controller
     }
     // end upload surat
 
-    // upload surat
+    // pengesahan dan pengiriman surat
     public function indexSent(){
         $countSurat = IncomingMail::whereIn('status', [
             ProcessStatus::finish->value,
@@ -398,7 +399,11 @@ class LetterProcessController extends Controller
             ]);
         }
         try {
-            DB::transaction(function () use ($r) {
+            $resTemplate = [
+                'status' => true,
+                'message' => 'Berhasil Mengesahkan dan Mengirim surat'
+            ];
+            DB::transaction(function () use ($r, &$resTemplate) {
                 $item = IncomingMail::where('id', $r->incoming_mail_id)->lockForUpdate()->firstOrFail();
                 // hapus file PDF lama jika ada
                 if ($item->file_path && Storage::disk('public')->exists($item->file_path)) {
@@ -407,14 +412,21 @@ class LetterProcessController extends Controller
 
                 $file_path = $r->file('surat_pdf')->store('upload/surat', 'public');
                 $item->file_path = $file_path;
-                $item->status = ProcessStatus::sent->value;
                 $item->save();
+
+                $helperWa = new HelperApiWaFonte;
+                $res = $helperWa->sendWaNotification($item);
+                if ($res['status']) {
+                    $item->status = ProcessStatus::sent->value;
+                    $item->send_at = date('Y-m-d H:i');
+                    $item->save();
+                }else{
+                    $resTemplate['status'] = false;
+                    $resTemplate['message'] = $res['message'];
+                }
             });
-    
-            return response()->json([
-                'status' => true,
-                'message' => 'Berhasil Upload Surat, Menunggu Pengesahan',
-            ]);
+
+            return response()->json($resTemplate);
         } catch (\Throwable $th) {
             return response()->json([
                 'status' => false,
@@ -422,5 +434,19 @@ class LetterProcessController extends Controller
             ]);
         }
     }
-    // end upload surat
+    // end pengesahan dan pengiriman surat
+
+    // unduh surat no middleware
+    public function download($incomingMailId){
+        try {
+            $item = IncomingMail::where('id', decrypt($incomingMailId))->first();
+            if ($item && $item->file_path && Storage::disk('public')->exists($item->file_path)) {
+                return Storage::disk('public')->download($item->file_path, $item->mail->name . '.pdf');
+            }else{
+                return redirect('/misc/error');
+            }
+        } catch (\Throwable $th) {
+            return redirect('/misc/error');
+        }
+    }
 }
