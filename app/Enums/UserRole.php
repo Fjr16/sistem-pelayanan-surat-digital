@@ -18,4 +18,12 @@ enum UserRole: string
             self::WALINAGARI => 'Wali Nagari',
         };
     }
+    public function color(): string{
+        return match ($this) {
+            self::PENDUDUK => 'bg-dark text-white',
+            self::PETUGAS => 'bg-blue text-white',
+            self::SEKRETARIS => 'bg-teal text-white',
+            self::WALINAGARI => 'bg-primary text-white',
+        };
+    }
 }

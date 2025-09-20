@@ -60,6 +60,56 @@
     color: #fff !important;
     opacity: 0.7 !important;
     }
+
+    /* backround color custom */
+    /* Orange */
+    .bg-orange {
+        background-color: #fd7e14; /* oranye */
+        color: #fff;
+    }
+
+    /* Red */
+    .bg-red {
+        background-color: #dc3545; /* merah */
+        color: #fff;
+    }
+
+    /* Blue */
+    .bg-blue {
+        background-color: #0d6efd; /* biru */
+        color: #fff;
+    }
+
+    /* Green */
+    .bg-green {
+        background-color: #198754; /* hijau */
+        color: #fff;
+    }
+
+    /* Purple */
+    .bg-purple {
+        background-color: #6f42c1; /* ungu */
+        color: #fff;
+    }
+
+    /* Yellow */
+    .bg-yellow {
+        background-color: #ffc107; /* kuning */
+        color: #212529; /* biar lebih kontras */
+    }
+    .bg-pink {
+        background-color: #d63384;
+        color: #fff;
+    }
+    .bg-teal {
+        background-color: #20c997;
+        color: #fff;
+    }
+    .bg-gray {
+        background-color: #6c757d !important;
+        color: #fff !important;
+    }
+    /* end  backround color custom */
 </style>
 @stack('page-css')
 

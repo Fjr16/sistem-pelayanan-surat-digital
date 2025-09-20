@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\UserRole;
+use App\Helpers\HelperDashboard;
+use App\Models\IncomingMail;
 use App\Models\Mail;
 use App\Models\MailRequirement;
 use App\Models\User;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
@@ -14,18 +18,36 @@ class MasterController extends Controller
 {
     // start dashboard
     public function dashboard() {
-        $year = now()->year;
-        $startDate = now()->setYear((int) $year)->setMonth(1)->startOfMonth();
-        $endDate = now()->setYear((int) $year)->setMonth(12)->endOfMonth();
+        $year = request()->get('year') ?? now()->year;
 
-        $totalDynamic = User::count();
+        $helperDashboards = new HelperDashboard();
+        $role = Auth::user()->role;
+        $data = [];
+        $query = IncomingMail::query();
+        if($role == UserRole::PENDUDUK->value){
+            $data = $helperDashboards->pendudukDashboard(Auth::user()->id);
+            $query->where('penduduk_id', Auth::user()->id);
+        }elseif($role == UserRole::PETUGAS->value){
+            $data['title'] = 'Grafik Data Pengajuan Surat';
+            $data['byMonth'] = $helperDashboards->dataPengajuanPerBulan($year);
+            $data['baseOnStatus'] = $helperDashboards->baseOnStatusCurrentMonth();
+        }elseif($role == UserRole::SEKRETARIS->value){
+            $data['title'] = 'Grafik Data Pengajuan Surat';
+            $data['byMonth'] = $helperDashboards->dataPengajuanPerBulan($year);
+            $data['baseOnStatus'] = $helperDashboards->baseOnStatusCurrentMonth();
+            $data['baseOnMail'] = $helperDashboards->baseOnMailCurrentMonth();
+            $data['baseOnRoles'] = $helperDashboards->countUserByRole();
+        }elseif($role == UserRole::WALINAGARI->value){
+            $data['title'] = 'Grafik Data Pengajuan Surat';
+            $data['byMonth'] = $helperDashboards->dataPengajuanPerBulan($year);
+            $data['baseOnStatus'] = $helperDashboards->baseOnStatusCurrentMonth();
+            $data['baseOnMail'] = $helperDashboards->baseOnMailCurrentMonth();
+        }
+        $totalPengajuan = $query->count();
         return view('pages.dashboard', [
-            'total_siswa' => 10,
-            'total_dinamis' => $totalDynamic,
-            'total_guru' => 20,
-            'total_mapel' => 50,
-            'monthlyCount' => [20,40,50],
-            'year' => $year
+            'year' => $year,
+            'data' => $data,
+            'totalPengajuan' => $totalPengajuan
         ]);
     }
     // end dashboard

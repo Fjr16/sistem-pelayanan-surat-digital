@@ -22,4 +22,15 @@ enum ProcessStatus:string {
             // self::downloaded => 'Diunduh'
         };
     }
+
+    public function color(){
+        return match ($this) {
+            self::pending  => 'bg-yellow text-white',
+            self::rejected => 'bg-pink text-white',
+            self::cancel   => 'bg-red text-white',
+            self::process  => 'bg-blue text-white',
+            self::finish   => 'bg-primary text-white',
+            self::sent     => 'bg-green text-white',
+        };
+    }
 }

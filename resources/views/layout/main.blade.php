@@ -9,6 +9,8 @@
     @include('layout.styles')
     {{-- data tables --}}
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/dataTables/datatables.min.css') }}">
+    <!-- Datepicker -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/css/bootstrap-datepicker.min.css">
   </head>
 
   <body>
@@ -75,6 +77,8 @@
         <script src="{{ asset('/assets/vendor/libs/apex-charts/apexcharts.js') }}"></script>
         {{-- datatables --}}
         <script src="{{ asset('/assets/vendor/libs/dataTables/datatables.min.js') }}"></script>
+        {{-- datepicker --}}
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/js/bootstrap-datepicker.min.js"></script>
     @endpush
     {{-- page js --}}
     @push('page-js')

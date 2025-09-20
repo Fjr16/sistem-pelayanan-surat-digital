@@ -5,7 +5,6 @@ use App\Http\Controllers\AuthenticateController;
 use App\Http\Controllers\LetterProcessController;
 use App\Http\Controllers\MasterController;
 use App\Http\Controllers\QrVerifyController;
-use App\Http\Controllers\RekapitulasiController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SubmissionLetterController;
 use App\Http\Controllers\UserController;
@@ -30,7 +29,7 @@ Route::middleware('auth')->group(function () {
         // Route::put('/pengguna/restore/{id}', [UserController::class, 'restore'])->name('pengguna.restore');
 
         Route::get('/profile', [UserController::class, 'profile'])->name('profile')->withoutMiddleware('sekretaris');
-        
+
         // master data surat
         Route::get('jenis/surat', [MasterController::class, 'indexMail'])->name('jenis/surat.index');
         Route::get('jenis/surat/create', [MasterController::class, 'createMail'])->name('jenis/surat.create');
@@ -51,7 +50,7 @@ Route::middleware('auth')->group(function () {
         Route::post('surat/saya/update/status', [SubmissionLetterController::class, 'updateStatusPengajuan'])->name('surat/saya/update.status');
     });
 
-        
+
     Route::middleware('petugas')->group(function () {
         // Proses Surat verifikasi
         Route::get('proses/surat/verifikasi', [LetterProcessController::class, 'indexVerifikasi'])->name('proses/surat/verifikasi.index');
