@@ -171,7 +171,7 @@ class LetterProcessController extends Controller
             'incoming_mails.*',
             'mails.name as mail_name',
             'pet.name as petugas_name',
-            'pend.name as penduduk_name',
+            'pend.name as penduduk_name'
         );
 
         return DataTables::of($data)
