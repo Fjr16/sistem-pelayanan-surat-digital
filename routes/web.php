@@ -98,5 +98,7 @@ Route::get('/misc/error', function () {
     return view('pages.misc-page.error');
 });
 
+Route::get('refresh/captcha', [AuthenticateController::class, 'refreshCaptcha'])->name('refresh.captcha');
+
 
 

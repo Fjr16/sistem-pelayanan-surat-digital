@@ -14,6 +14,9 @@ use Illuminate\Validation\Rule;
 
 class AuthenticateController extends Controller
 {
+    public function refreshCaptcha(){
+        return response()->json(['captcha' => captcha_src()]);
+    }
     public function index(){
         $title = 'Welcome to ' . env('APP_NAME');
         $slug = 'Please sign-in to your account and make your first submission';
@@ -21,10 +24,18 @@ class AuthenticateController extends Controller
     }
 
     public function store(Request $request) {
-        $credentials = $request->validate([
+        $request->validate([
             'username' => 'required|string',
             'password' => 'required',
+            'captcha' => 'required|captcha'
+        ],[
+            'captcha.captcha' => 'invalid captcha',
         ]);
+
+        $credentials = [
+            'username' => $request->username,
+            'password' => $request->password
+        ];
 
         if (!Auth::attempt($credentials)) {
             return back()->withErrors([

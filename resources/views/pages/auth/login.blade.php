@@ -41,6 +41,22 @@
                   <span class="input-group-text cursor-pointer"><i class="icon-base bx bx-hide"></i></span>
                 </div>
               </div>
+              <div class="mb-2 d-flex gap-2">
+                <img src="{{ captcha_src() }}" alt="captcha" id="captchaImg" width="60%">
+                <button type="button" class="btn btn-md btn-danger" id="refreshCaptchaBtn"><i class="bx bx-refresh" style="font-size: 25px;"></i></button>
+              </div>
+              <div class="mb-6">
+                  <input
+                    type="text"
+                    id="captcha"
+                    class="form-control @error('captcha') is-invalid @enderror"
+                    placeholder="Enter the captcha"
+                    name="captcha"
+                    />
+                    @error('captcha')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+              </div>
               <div class="mb-6">
                 <button class="btn btn-primary d-grid w-100" type="submit">Login</button>
               </div>
@@ -58,4 +74,24 @@
       </div>
     </div>
   </div>
+
+  @push('page-js')
+    <script>
+      $('#refreshCaptchaBtn').on('click', function(){
+        $.ajax({
+          url:"refresh/captcha",
+          method:"GET",
+          success:function(data){
+            $('#captchaImg').attr('src', data.captcha);
+          },
+          error:function(xhr){
+            Toast.fire({
+                icon: 'error',
+                text: xhr.responseText().slice(0,150)
+            });
+          }
+        });
+      });
+    </script>
+  @endpush
 @endsection
