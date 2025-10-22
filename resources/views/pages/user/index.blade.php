@@ -174,7 +174,7 @@
                                     name="no_wa"
                                     required
                                     />
-                                    <small class="fst-italic text-danger">Pastikan nomor memiliki WA yang aktif, karena surat akan dikirim ke nomor ini</small>
+                                    {{-- <small class="fst-italic text-danger">Pastikan nomor memiliki WA yang aktif, karena surat akan dikirim ke nomor ini</small> --}}
                             </div>
                         </div>
                         <div class="row mb-6">
@@ -396,7 +396,7 @@
                                     name="no_wa"
                                     required
                                     />
-                                    <small class="fst-italic text-danger">Pastikan nomor memiliki WA yang aktif, karena surat akan dikirim ke nomor ini</small>
+                                    {{-- <small class="fst-italic text-danger">Pastikan nomor memiliki WA yang aktif, karena surat akan dikirim ke nomor ini</small> --}}
                             </div>
                         </div>
                         <div class="row mb-6">
