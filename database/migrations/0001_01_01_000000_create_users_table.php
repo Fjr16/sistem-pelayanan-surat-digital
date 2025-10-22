@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('username', 20)->unique()->nullable(false);
             $table->string('password')->nullable(false);
             $table->string('email', 30)->unique()->nullable(false);
-            $table->string('no_wa', 20)->unique()->nullable(false);
+            $table->string('no_wa', 20)->nullable(false);
             $table->string('nik', 16)->unique()->nullable(false);
             $table->string('no_kk', 20)->nullable(false);
             $table->string('name')->nullable(false);
