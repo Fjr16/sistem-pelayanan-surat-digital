@@ -94,7 +94,7 @@
                     },
                     {
                         data:'mail_name',
-                        name:'mail_name'
+                        name:'mails.name'
                     },
                     {
                         data:'incoming_mails.created_at',
@@ -102,12 +102,12 @@
                     },
                     {
                         data:'penduduk_name',
-                        name:'penduduk_name',
+                        name:'pend.name',
                         'defaultContent' : '-'
                     },
                     {
                         data:'petugas_name',
-                        name:'petugas_name',
+                        name:'pet.name',
                         'defaultContent' : '-'
                     },
                     {

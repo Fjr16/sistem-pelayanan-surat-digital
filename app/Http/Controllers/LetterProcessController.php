@@ -134,22 +134,24 @@ class LetterProcessController extends Controller
         }
         $arr = [];
         foreach ($incomingMail->incomingMailDetails as $key => $item) {
-            $val = null; 
-            if ($item->mailRequirement->field_type == 'checkbox-group') {
-                $val = json_decode($item->value_json, true);
-            }elseif($item->mailRequirement->field_type == 'textarea'){
-                $val = $item->value_text;
-            }else{
-                $val = $item->value_basic;
+            if ($item->mailRequirement) {
+                $val = null; 
+                    if ($item->mailRequirement?->field_type == 'checkbox-group') {
+                        $val = json_decode($item->value_json, true);
+                    }elseif($item->mailRequirement?->field_type == 'textarea'){
+                        $val = $item->value_text;
+                    }else{
+                        $val = $item->value_basic;
+                    }
+                $arr[] =  [
+                    'label' => $item->mailRequirement->field_label,
+                    'type' => $item->mailRequirement->field_type,
+                    'subtype' => $item->mailRequirement->field_type,
+                    'required' => $item->mailRequirement->is_required,
+                    'value' => $val,
+                    'is_filled' => !empty($val),
+                ];
             }
-            $arr[] =  [
-                'label' => $item->mailRequirement->field_label,
-                'type' => $item->mailRequirement->field_type,
-                'subtype' => $item->mailRequirement->field_type,
-                'required' => $item->mailRequirement->is_required,
-                'value' => $val,
-                'is_filled' => !empty($val),
-            ];
         }
         return $arr;
     }

@@ -89,7 +89,7 @@ class SubmissionLetterController extends Controller
                     }elseif($row['type'] == 'email'){
                         $type = "email";
                     }elseif(in_array($row['type'],['number', 'range'])){
-                        $type = "number";
+                        $type = "numeric";
                     }elseif($row['type'] == 'datetime-local'){
                         $type = "datetime";
                     }elseif($row['type'] == 'checkbox-group'){
@@ -105,7 +105,7 @@ class SubmissionLetterController extends Controller
                         $row['min'] ?  : null,
                         $row['max'] ? 'max:' . $row['max'] : ($row['type'] == 'file' ? 'max:2048' : null),
                         $row['maxlength'] ? 'max:' . $row['max'] : null,
-                        $row['values'] ? 'in:' . implode(array_column($row['values'], 'value')) : null,
+                        $row['values'] ? 'in:' . implode(',',array_column($row['values'], 'value')) : null,
                     ];
                 }
             }
@@ -146,7 +146,7 @@ class SubmissionLetterController extends Controller
                         $incomingDetail->value_text = null;
                         $incomingDetail->value_json = null;
                     }else{
-                        $incomingDetail->value_basic = $r->file($row['name']);
+                        $incomingDetail->value_basic = $r->input($row['name']);
                         $incomingDetail->value_text = null;
                         $incomingDetail->value_json = null;
                     }

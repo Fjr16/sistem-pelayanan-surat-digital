@@ -78,6 +78,9 @@
             <div class="card-body">
                 @php
                 $arrBgClass = ['bg-orange', 'bg-red', 'bg-blue', 'bg-green', 'bg-purple', 'bg-pink', 'bg-teal', 'bg-gray', 'bg-info'];
+                if(!isset($data['baseOnMail'])){
+                    $data['baseOnMail'] = [];
+                }
                 @endphp
                 <div class="row">
                     @foreach ($data['baseOnMail'] as $item)
