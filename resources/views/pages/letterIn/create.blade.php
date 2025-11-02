@@ -226,8 +226,13 @@
                         text:res.message,
                     });
                     form.reset();
+                    const isPetugas = @json(Auth::user() && Auth::user()->role === 'petugas');
                     setTimeout(() => {
-                        window.location.href = "{{ route('surat/saya.index') }}";
+                        if(isPetugas){
+                            window.location.href = "{{ route('proses/surat/verifikasi.index') }}";
+                        }else{
+                            window.location.href = "{{ route('surat/saya.index') }}";
+                        }
                     }, 2000);
                 }else{
                     Toast.fire({
