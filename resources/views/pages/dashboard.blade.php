@@ -1,5 +1,15 @@
 @extends('layout.main')
 
+@push('page-css')
+    <style>
+        .card-status-title {
+            min-height: 60px;     /* sesuaikan, kira-kira cukup untuk 2 baris */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+    </style>
+@endpush
 @section('content')
 <div class="container-xxl flex-grow-1 container-p-y pt-0">
     <div class="row">
@@ -52,9 +62,9 @@
                 <div class="row">
                     @foreach ($data['baseOnStatus'] as $item)
                     <div class="col-lg-3 col-md-6 col-12 mb-4">
-                        <div class="card text-center">
-                        <div class="card-body {{ $item['color'] }} rounded">
-                            <h6 class="text-muted fw-bold text-white">
+                        <div class="card text-center h-100">
+                        <div class="card-body {{ $item['color'] }} rounded d-flex flex-column justify-content-between">
+                            <h6 class="text-muted fw-bold text-white card-status-title">
                                 Surat Dengan Status <br>
                                 <span class="text-uppercase ">{{ $item['label'] }}</span>
                             </h6>
@@ -88,9 +98,9 @@
                         $selectedBg = Arr::random($arrBgClass);
                     @endphp
                     <div class="col-lg-3 col-md-6 col-12 mb-4">
-                        <div class="card text-center">
-                        <div class="card-body {{ $selectedBg }} rounded">
-                            <h6 class="text-muted fw-bold text-white">
+                        <div class="card text-center h-100">
+                        <div class="card-body {{ $selectedBg }} rounded d-flex flex-column justify-content-between">
+                            <h6 class="text-muted fw-bold text-white card-status-title">
                                 <span class="text-uppercase ">{{ $item['name'] }}</span>
                             </h6>
                             <h3 class="mb-0 text-white">{{ $item['jumlah'] }}</h3>

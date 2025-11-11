@@ -87,6 +87,7 @@ Route::middleware('guest')->group(function () {
     Route::post('/login', [AuthenticateController::class, 'store'])->name('login');
     Route::get('/registration', [AuthenticateController::class, 'indexRegister'])->name('register');
     Route::post('/registration', [AuthenticateController::class, 'storeRegister'])->name('register');
+    Route::post('/registration/validation', [AuthenticateController::class, 'validationRegister'])->name('register.validation');
 
     // verifikasi qr code
     Route::get('letter/verify/code', [QrVerifyController::class, 'verify'])->name('Qr.verify');

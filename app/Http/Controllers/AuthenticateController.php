@@ -55,7 +55,33 @@ class AuthenticateController extends Controller
     }
 
     // register akun
-     public function indexRegister(){
+    public function validationRegister(Request $req) {
+        try {
+            $valid = Validator::make($req->all(), [
+                'email' => 'sometimes|required|email|unique:users,email',
+                'username' => 'sometimes|required|unique:users,username',
+                'nik' => 'sometimes|required|unique:users,nik'
+            ], [
+                'email.required' => 'Email harus diisi',
+                'email.email' => 'Format email tidak valid',
+                'email.unique' => 'Email telah digunakan',
+                'username.required' => 'Username harus diisi',
+                'username.unique' => 'Username telah digunakan',
+                'nik.required' => 'NIK harus diisi',
+                'nik.unique' => 'NIK telah digunakan',
+            ]);
+            return response()->json([
+                'status' => $valid->fails() ? false : true,
+                'errors' => $valid->fails() ? $valid->errors() : [],
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => false,
+                'message' => substr($th->getMessage(),0,150),
+            ]);
+        }
+    }
+    public function indexRegister(){
         $agama = Agama::cases();
         $maritalStts = MaritalStatus::cases();
         $arrJk = [

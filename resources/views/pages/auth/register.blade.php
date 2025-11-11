@@ -40,7 +40,7 @@
             <div class="step d-none" data-step="1">
               <div class="mb-6">
                 <label class="form-label">Username *</label>
-                <input type="text" class="form-control" name="username" required value="{{ old('username') }}">
+                <input type="text" class="form-control" name="username" id="username" required value="{{ old('username') }}">
               </div>
               <div class="mb-6">
                 <label class="form-label">Password *</label>
@@ -49,10 +49,13 @@
               <div class="mb-6">
                 <label class="form-label">Konfirmasi Password *</label>
                 <input type="password" class="form-control" id="password_confirm" required value="{{ old('password_confirm') }}">
+                <div class="invalid-feedback">
+                  <span class="text-danger">*Password tidak sama</span>
+                </div>
               </div>
               <div class="mb-6">
                 <label class="form-label">Email *</label>
-                <input type="email" class="form-control" name="email" required value="{{ old('email') }}">
+                <input type="email" class="form-control" name="email" id="email" required value="{{ old('email') }}">
               </div>
               <div class="mb-6">
                 <label class="form-label">Nomor WhatsApp *</label>
@@ -64,7 +67,7 @@
             <div class="step d-none" data-step="2">
               <div class="mb-6">
                 <label class="form-label">NIK *</label>
-                <input type="text" class="form-control" name="nik" required value="{{ old('nik') }}">
+                <input type="text" class="form-control" name="nik" id="nik" required value="{{ old('nik') }}">
               </div>
               <div class="mb-6">
                 <label class="form-label">No KK *</label>
@@ -198,6 +201,17 @@
     });
 
     function validateStep(step) {
+        // Cek: apakah ada minimal satu field yang masih is-invalid?
+        let someFields = document.querySelectorAll('#username, #email, #nik, #password_confirm');
+        const hasInvalid = [...someFields].some(field =>
+            field.classList.contains('is-invalid')
+        );
+
+        if (hasInvalid) {
+            // blok pindah step
+            return;
+        }
+
         let valid = true;
         let stepFields = document.querySelectorAll(`.step[data-step="${step}"] [required]`);
 
@@ -209,19 +223,77 @@
                 field.classList.remove("is-invalid");
             }
         });
-
-        // khusus password confirmation di step 1
-        if (step == 1) {
-            let pass = document.querySelector("#password").value;
-            let confirm = document.querySelector("#password_confirm").value;
-            if (pass !== confirm) {
-                document.querySelector("#password_confirm").classList.add("is-invalid");
-                valid = false;
-            }
-        }
-
+        
         return valid;
     }
+</script>
+  
+<script>
+  const inputs = document.querySelectorAll('#username, #email, #nik');
+  inputs.forEach(input => {
+    input.addEventListener('input', async function(){
+      let formData = new FormData();
+      formData.append(this.name, this.value);
+
+      try {
+        const res = await fetch("{{ route('register.validation') }}", {
+          method: 'POST',
+          headers: {
+            'X-CSRF-TOKEN' : "{{ csrf_token() }}",
+            'Accept' : 'application/json'
+          },
+          body: formData
+        });
+  
+        if (!res.ok) {
+          throw new Error('Terjadi Kesalahan pada server');
+        }
+        const data = await res.json();
+
+        if(data.status === false){
+          const fieldErrors = data.errors[this.name] || [];
+          if (fieldErrors.length > 0) {
+            this.classList.add('is-invalid');
+
+            let feedback = this.nextElementSibling;
+            if (!feedback || !feedback.classList.contains('invalid-feedback')) {
+              feedback = document.createElement('div');
+              feedback.className = 'invalid-feedback';
+              this.insertAdjacentElement('afterend', feedback);
+            }
+            feedback.textContent = fieldErrors[0];
+          }
+        }else{
+          this.classList.remove('is-invalid');
+
+          let feedback = this.nextElementSibling;
+          if (feedback && feedback.classList.contains('invalid-feedback')) {
+            feedback.textContent = '';
+          }
+        }
+
+      } catch (error) {
+        Toast.fire({
+          icon:'error',
+          text:error.message
+        });
+        console.log(error.message);
+      }
+    });
+  });
+
+  const pwConfirm = document.querySelectorAll('#password_confirm, #password');
+  pwConfirm.forEach(pw => {
+    pw.addEventListener('input', function(){
+      let pass = document.querySelector("#password");
+      let confirm = document.querySelector("#password_confirm"); 
+      if (pass.value !== confirm.value) {
+        confirm.classList.add("is-invalid");
+      }else{
+        confirm.classList.remove("is-invalid");
+      }
+    });
+  })
 </script>
 @endpush
 

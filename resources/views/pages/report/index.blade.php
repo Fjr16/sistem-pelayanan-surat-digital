@@ -298,33 +298,33 @@
                 })
 
 
-                const startDate = document.getElementById("start_date");
-                const endDate   = document.getElementById("end_date");
+                // const startDate = document.getElementById("start_date");
+                // const endDate   = document.getElementById("end_date");
 
-                startDate.addEventListener("change", function(){
-                    if(startDate.value){
-                        let start = new Date(startDate.value);
+                // startDate.addEventListener("change", function(){
+                //     if(startDate.value){
+                //         let start = new Date(startDate.value);
 
-                        // Tentukan batas 30 hari setelah start
-                        let maxEnd = new Date(start);
-                        maxEnd.setDate(maxEnd.getDate() + 30);
+                //         // Tentukan batas 30 hari setelah start
+                //         let maxEnd = new Date(start);
+                //         maxEnd.setDate(maxEnd.getDate() + 30);
 
-                        // Atur min dan max untuk end_date
-                        endDate.min = startDate.value;
-                        endDate.max = maxEnd.toISOString().split("T")[0];
+                //         // Atur min dan max untuk end_date
+                //         endDate.min = startDate.value;
+                //         endDate.max = maxEnd.toISOString().split("T")[0];
 
-                        // Reset end_date kalau tidak valid
-                        if(endDate.value){
-                            let end = new Date(endDate.value);
-                            if(end < start || end > maxEnd){
-                                endDate.value = "";
-                            }
-                        }
-                    } else {
-                        endDate.removeAttribute("min");
-                        endDate.removeAttribute("max");
-                    }
-                });
+                //         // Reset end_date kalau tidak valid
+                //         if(endDate.value){
+                //             let end = new Date(endDate.value);
+                //             if(end < start || end > maxEnd){
+                //                 endDate.value = "";
+                //             }
+                //         }
+                //     } else {
+                //         endDate.removeAttribute("min");
+                //         endDate.removeAttribute("max");
+                //     }
+                // });
             });
 
             // function showSurat();
